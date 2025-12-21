@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Split EGP Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-surface: #fef7ff;
+            --md-sys-color-surface-container: #f3edf7;
+            --md-sys-color-secondary-container: #e8def8;
+            --md-sys-color-whatsapp: #25D366;
+            --md-sys-color-error: #B3261E;
+            --md-sys-color-success: #2E7D32;
+        }
+
+        body { font-family: 'Roboto', sans-serif; background-color: var(--md-sys-color-surface); color: #1C1B1F; margin: 0; padding: 0; }
+        .page { display: none; width: 100%; min-height: 100vh; padding: 20px; box-sizing: border-box; padding-bottom: 120px; }
+        .active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .card { background: var(--md-sys-color-surface-container); padding: 20px; border-radius: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--md-sys-color-primary); display: block; }
+        
+        input { background: white; border: 1.5px solid #E0E0E0; border-radius: 16px; padding: 14px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 16px; transition: border 0.2s; }
+        input:focus { border-color: var(--md-sys-color-primary); outline: none; }
+
+        .switch-container { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--md-sys-color-primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 16px 24px; display: flex; gap: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); z-index: 100; }
+        .btn-full { flex: 1; border-radius: 100px; padding: 16px; font-weight: 500; border: none; cursor: pointer; font-size: 1rem; }
+        .btn-primary { background: var(--md-sys-color-primary); color: white; }
+        .btn-tonal { background: var(--md-sys-color-secondary-container); color: #1D192B; }
+        .btn-whatsapp { background: var(--md-sys-color-whatsapp); color: white; }
+        
+        .result-item { padding: 16px 0; border-bottom: 1px solid #EEE; }
+        .payment-status { font-weight: 700; font-size: 0.9rem; margin-top: 8px; display: block; }
+        .owed { color: var(--md-sys-color-error); }
+        .change { color: var(--md-sys-color-success); }
+        
+        .paid-input-mini { width: 120px !important; padding: 8px !important; margin: 0 !important; border-radius: 8px !important; display: inline-block; }
+        .grand-total { font-size: 2.5rem; font-weight: 700; text-align: center; margin: 10px 0; color: var(--md-sys-color-primary); }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="page active">
+        <h2 style="margin-top: 60px;">Split EGP</h2>
+        <div class="card">
+            <span class="label">Number of People</span>
+            <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="How many?">
+            <button class="btn-full btn-primary" onclick="initApp()" style="margin-top: 20px;">Continue</button>
+        </div>
+    </div>
+
+    <div id="page2" class="page">
+        <h2>Bill Details</h2>
+        <div id="peopleInputsContainer"></div>
+        <div class="card" style="border: 2px dashed var(--md-sys-color-primary);">
+            <span class="label">Shared Items</span>
+            <div id="commonContainer">
+                <input type="number" step="0.01" placeholder="EGP" oninput="updateCommon(0, this.value)" inputmode="decimal">
+            </div>
+            <button style="background:none; border:none; color:var(--md-sys-color-primary); font-weight:700;" onclick="addCommonItem()">+ ADD SHARED ITEM</button>
+        </div>
+        <div class="card">
+            <div class="switch-container"><span>Service (12%)</span><label class="switch"><input type="checkbox" id="serviceToggle" checked><span class="slider"></span></label></div>
+            <div class="switch-container"><span>VAT Tax (14%)</span><label class="switch"><input type="checkbox" id="taxToggle" checked><span class="slider"></span></label></div>
+            <span class="label">Total Tip (Baksheesh)</span>
+            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric">
+        </div>
+        <div class="bottom-bar">
+            <button class="btn-full btn-tonal" onclick="showPage(1)">Back</button>
+            <button class="btn-full btn-primary" onclick="calculateAndShowResults()">Calculate</button>
+        </div>
+    </div>
+
+    <div id="page3" class="page">
+        <h2>Payment Tracker</h2>
+        <div class="card">
+            <div id="resultsList"></div>
+            <div class="grand-total" id="grandTotalDisplay">0</div>
+            <div style="text-align: center; font-size: 0.8rem; color: #888; margin-top: -10px;">TOTAL EGP</div>
+        </div>
+        <div class="bottom-bar">
+            <button class="btn-full btn-tonal" onclick="location.reload()">Reset</button>
+            <button class="btn-full btn-whatsapp" onclick="shareToWhatsApp()">Share</button>
+        </div>
+    </div>
+
+    <script>
+        let peopleData = [];
+        let commonItems = [0];
+        let shareMessage = "";
+
+        function showPage(num) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + num).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function initApp() {
+            const count = document.getElementById('peopleCount').value;
+            if(!count || count < 1) return alert("Enter count");
+            generateInputs(count);
+            showPage(2);
+        }
+
+        function generateInputs(count) {
+            const container = document.getElementById('peopleInputsContainer');
+            container.innerHTML = '';
+            peopleData = [];
+            for (let i = 0; i < count; i++) {
+                peopleData.push({ name: `Person ${i+1}`, plates: [0], roundedTotal: 0 });
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <input type="text" value="Person ${i+1}" onchange="peopleData[${i}].name = this.value" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
+                    <div id="plates-container-${i}"><input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${i}, 0, this.value)" inputmode="decimal"></div>
+                    <button style="background:none; border:none; color:var(--md-sys-color-primary); font-weight:700;" onclick="addPlateInput(${i})">+ ADD PLATE</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function updatePlate(pIdx, plIdx, val) { peopleData[pIdx].plates[plIdx] = parseFloat(val) || 0; }
+        function updateCommon(idx, val) { commonItems[idx] = parseFloat(val) || 0; }
+
+        function addPlateInput(pIdx) {
+            const plIdx = peopleData[pIdx].plates.length;
+            peopleData[pIdx].plates.push(0);
+            const input = document.createElement('input');
+            input.type = 'number'; input.step = '0.01'; input.placeholder = 'EGP'; input.inputMode = 'decimal';
+            input.oninput = (e) => updatePlate(pIdx, plIdx, e.target.value);
+            document.getElementById(`plates-container-${pIdx}`).appendChild(input);
+        }
+
+        function addCommonItem() {
+            const idx = commonItems.length; commonItems.push(0);
+            const input = document.createElement('input');
+            input.type = 'number'; input.step = '0.01'; input.placeholder = 'EGP'; input.inputMode = 'decimal';
+            input.oninput = (e) => updateCommon(idx, e.target.value);
+            document.getElementById('commonContainer').appendChild(input);
+        }
+
+        function updatePaidStatus(idx, paidValue) {
+            const paid = parseFloat(paidValue) || 0;
+            const diff = paid - peopleData[idx].roundedTotal;
+            const statusEl = document.getElementById(`status-${idx}`);
+            
+            if (paid === 0) statusEl.innerHTML = "";
+            else if (diff < 0) statusEl.innerHTML = `<span class="owed">Needs to pay ${Math.abs(diff)} EGP</span>`;
+            else if (diff > 0) statusEl.innerHTML = `<span class="change">Change due: ${diff} EGP</span>`;
+            else statusEl.innerHTML = `<span class="change">✓ Fully Paid</span>`;
+        }
+
+        function calculateAndShowResults() {
+            const numPeople = peopleData.length;
+            const useService = document.getElementById('serviceToggle').checked;
+            const useTax = document.getElementById('taxToggle').checked;
+            const totalCommon = commonItems.reduce((a, b) => a + b, 0);
+            const sharePerPerson = totalCommon / numPeople;
+            const tipPerPerson = (parseFloat(document.getElementById('totalTipValue').value) || 0) / numPeople;
+            
+            let finalSum = 0;
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+            shareMessage = "*Split Summary (EGP)* 🧾\n\n";
+
+            peopleData.forEach((person, i) => {
+                const foodSubtotal = person.plates.reduce((a, b) => a + b, 0) + sharePerPerson;
+                const serviceAmount = useService ? (foodSubtotal * 0.12) : 0;
+                const taxAmount = useTax ? ((foodSubtotal + serviceAmount) * 0.14) : 0;
+                
+                person.roundedTotal = Math.round(foodSubtotal + serviceAmount + taxAmount + tipPerPerson);
+                finalSum += person.roundedTotal;
+                shareMessage += `• *${person.name}*: ${person.roundedTotal} EGP\n`;
+
+                const row = document.createElement('div');
+                row.className = 'result-item';
+                row.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong>${person.name}: ${person.roundedTotal} EGP</strong>
+                            <div style="font-size:0.7rem; color:#888;">Exact: ${(foodSubtotal + serviceAmount + taxAmount + tipPerPerson).toFixed(2)}</div>
+                        </div>
+                        <input type="number" class="paid-input-mini" placeholder="Paid?" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
+                    </div>
+                    <div id="status-${i}" class="payment-status"></div>
+                `;
+                resultsList.appendChild(row);
+            });
+
+            document.getElementById('grandTotalDisplay').innerText = finalSum;
+            showPage(3);
+        }
+
+        function shareToWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank'); }
+    </script>
+</body>
+</html>
