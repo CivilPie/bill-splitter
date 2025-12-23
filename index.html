@@ -163,45 +163,65 @@
         }
 
         function calculateAndShowResults() {
-            const numPeople = peopleData.length;
-            const useService = document.getElementById('serviceToggle').checked;
-            const useTax = document.getElementById('taxToggle').checked;
-            const totalCommon = commonItems.reduce((a, b) => a + b, 0);
-            const sharePerPerson = totalCommon / numPeople;
-            const tipPerPerson = (parseFloat(document.getElementById('totalTipValue').value) || 0) / numPeople;
-            
-            let finalSum = 0;
-            const resultsList = document.getElementById('resultsList');
-            resultsList.innerHTML = '';
-            shareMessage = "*Split Summary (EGP)* 🧾\n\n";
+    const numPeople = peopleData.length;
+    const useService = document.getElementById('serviceToggle').checked;
+    const useTax = document.getElementById('taxToggle').checked;
+    const totalCommon = commonItems.reduce((a, b) => a + b, 0);
+    const sharePerPerson = totalCommon / numPeople;
+    const tipPerPerson = (parseFloat(document.getElementById('totalTipValue').value) || 0) / numPeople;
+    
+    let finalSum = 0;
+    const resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    
+    // Header for the WhatsApp Message
+    shareMessage = "*Bill Split Summary (EGP)* 🧾\n\n";
 
-            peopleData.forEach((person, i) => {
-                const foodSubtotal = person.plates.reduce((a, b) => a + b, 0) + sharePerPerson;
-                const serviceAmount = useService ? (foodSubtotal * 0.12) : 0;
-                const taxAmount = useTax ? ((foodSubtotal + serviceAmount) * 0.14) : 0;
-                
-                person.roundedTotal = Math.round(foodSubtotal + serviceAmount + taxAmount + tipPerPerson);
-                finalSum += person.roundedTotal;
-                shareMessage += `• *${person.name}*: ${person.roundedTotal} EGP\n`;
+    peopleData.forEach((person, i) => {
+        const foodSubtotal = person.plates.reduce((a, b) => a + b, 0) + sharePerPerson;
+        const serviceAmount = useService ? (foodSubtotal * 0.12) : 0;
+        const taxAmount = useTax ? ((foodSubtotal + serviceAmount) * 0.14) : 0;
+        
+        person.roundedTotal = Math.round(foodSubtotal + serviceAmount + taxAmount + tipPerPerson);
+        finalSum += person.roundedTotal;
 
-                const row = document.createElement('div');
-                row.className = 'result-item';
-                row.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <strong>${person.name}: ${person.roundedTotal} EGP</strong>
-                            <div style="font-size:0.7rem; color:#888;">Exact: ${(foodSubtotal + serviceAmount + taxAmount + tipPerPerson).toFixed(2)}</div>
-                        </div>
-                        <input type="number" class="paid-input-mini" placeholder="Paid?" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
-                    </div>
-                    <div id="status-${i}" class="payment-status"></div>
-                `;
-                resultsList.appendChild(row);
-            });
-
-            document.getElementById('grandTotalDisplay').innerText = finalSum;
-            showPage(3);
+        // Get the payment status for this person
+        const paidInput = document.querySelectorAll('.paid-input-mini')[i];
+        const paidAmount = parseFloat(paidInput ? paidInput.value : 0) || 0;
+        const diff = paidAmount - person.roundedTotal;
+        
+        let statusText = "";
+        if (paidAmount > 0) {
+            if (diff < 0) statusText = ` (Still owes ${Math.abs(diff)} EGP)`;
+            else if (diff > 0) statusText = ` (Change due: ${diff} EGP)`;
+            else statusText = ` (Fully Paid ✓)`;
         }
+
+        // Add to WhatsApp Message string
+        shareMessage += `• *${person.name}*: ${person.roundedTotal} EGP${statusText}\n`;
+
+        const row = document.createElement('div');
+        row.className = 'result-item';
+        row.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong>${person.name}: ${person.roundedTotal} EGP</strong>
+                    <div style="font-size:0.7rem; color:#888;">Exact: ${(foodSubtotal + serviceAmount + taxAmount + tipPerPerson).toFixed(2)}</div>
+                </div>
+                <input type="number" class="paid-input-mini" placeholder="Paid?" oninput="updatePaidStatus(${i}, this.value)" value="${paidAmount > 0 ? paidAmount : ''}" inputmode="decimal">
+            </div>
+            <div id="status-${i}" class="payment-status"></div>
+        `;
+        resultsList.appendChild(row);
+        
+        // Refresh the UI status colors
+        if (paidAmount > 0) updatePaidStatus(i, paidAmount);
+    });
+
+    shareMessage += `\n*Grand Total: ${finalSum} EGP*`;
+    document.getElementById('grandTotalDisplay').innerText = finalSum;
+    showPage(3);
+}
 
         function shareToWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank'); }
     </script>
