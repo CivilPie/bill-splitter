@@ -1,6 +1,6 @@
 {
-  "name": "Split EGP Pro",
-  "short_name": "Split EGP",
+  "name": "Split Bill",
+  "short_name": "Split Bill",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fef7ff",
