@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Split EGP Pro</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,45 +17,20 @@
             --md-sys-color-success: #2E7D32;
         }
 
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            background-color: var(--md-sys-color-surface);
-            color: #1C1B1F;
-            margin: 0; padding: 0;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--md-sys-color-surface); color: #1C1B1F; margin: 0; padding: 0; overflow-x: hidden; }
+        .page { display: none; width: 100%; min-height: 100vh; padding: 20px; box-sizing: border-box; padding-bottom: 120px; }
+        .active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        .page { 
-            display: none; width: 100%; min-height: 100vh;
-            padding: 20px; box-sizing: border-box; padding-bottom: 120px;
-        }
-        
-        .active { 
-            display: block; 
-            animation: slideIn 0.3s ease-out; 
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(30px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        h2 { font-weight: 500; color: var(--md-sys-color-primary); text-align: center; }
-
-        .card { 
-            background: var(--md-sys-color-surface-container); 
-            padding: 20px; border-radius: 24px; margin-bottom: 16px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
+        .card { background: var(--md-sys-color-surface-container); padding: 20px; border-radius: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--md-sys-color-primary); display: block; margin-top: 10px; }
 
-        input { 
-            background: white; border: 1.5px solid #E0E0E0; border-radius: 16px; 
-            padding: 16px; margin: 8px 0; width: 100%; box-sizing: border-box; 
-            font-size: 16px; transition: border 0.2s;
-        }
+        input { background: white; border: 1.5px solid #E0E0E0; border-radius: 16px; padding: 14px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 16px; transition: border 0.2s; }
         input:focus { border-color: var(--md-sys-color-primary); outline: none; }
+
+        /* Split logic styling */
+        .plate-row { display: flex; gap: 8px; align-items: center; }
+        .split-box { width: 70px !important; text-align: center; border-color: var(--md-sys-color-primary) !important; font-weight: bold; }
 
         .switch-group { display: flex; flex-direction: column; gap: 12px; margin: 15px 0; }
         .switch-container { display: flex; justify-content: space-between; align-items: center; }
@@ -67,12 +41,7 @@
         input:checked + .slider { background-color: var(--md-sys-color-primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        .bottom-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 16px 24px; display: flex; gap: 12px;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.08); z-index: 100;
-        }
-
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 16px 24px; display: flex; gap: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); z-index: 100; }
         .btn-full { flex: 1; border-radius: 100px; padding: 16px; font-weight: 500; border: none; cursor: pointer; font-size: 1rem; }
         .btn-primary { background: var(--md-sys-color-primary); color: white; }
         .btn-tonal { background: var(--md-sys-color-secondary-container); color: #1D192B; }
@@ -102,21 +71,24 @@
     <div id="page2" class="page">
         <h2>Bill Details</h2>
         <div id="peopleInputsContainer"></div>
+        
         <div class="card" style="border: 2px dashed var(--md-sys-color-primary);">
-            <span class="label">Shared Items (Water, Appetizers)</span>
+            <span class="label">Shared Items (For Everyone)</span>
             <div id="commonContainer">
                 <input type="number" step="0.01" placeholder="EGP" oninput="updateCommon(0, this.value)" inputmode="decimal">
             </div>
             <button class="btn-small" onclick="addCommonItem()">+ ADD SHARED ITEM</button>
         </div>
+
         <div class="card">
             <div class="switch-group">
-                <div class="switch-container"><span>Service Charge (12%)</span><label class="switch"><input type="checkbox" id="serviceToggle" checked><span class="slider"></span></label></div>
+                <div class="switch-container"><span>Service (12%)</span><label class="switch"><input type="checkbox" id="serviceToggle" checked><span class="slider"></span></label></div>
                 <div class="switch-container"><span>VAT Tax (14%)</span><label class="switch"><input type="checkbox" id="taxToggle" checked><span class="slider"></span></label></div>
             </div>
-            <span class="label">Total Table Tip (Baksheesh)</span>
+            <span class="label">Total Table Tip</span>
             <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric">
         </div>
+
         <div class="bottom-bar">
             <button class="btn-full btn-tonal" onclick="showPage(1)">Back</button>
             <button class="btn-full btn-primary" onclick="calculateAndShowResults()">Calculate</button>
@@ -139,7 +111,6 @@
     <script>
         let peopleData = [];
         let commonItems = [0];
-        let shareMessage = "";
 
         function showPage(num) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -159,30 +130,41 @@
             container.innerHTML = '';
             peopleData = [];
             for (let i = 0; i < count; i++) {
-                peopleData.push({ name: `Person ${i+1}`, plates: [0], roundedTotal: 0 });
+                peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0 });
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
                     <input type="text" value="Person ${i+1}" onchange="peopleData[${i}].name = this.value" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
-                    <div id="plates-container-${i}"><input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${i}, 0, this.value)" inputmode="decimal"></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Divide by</span></div>
+                    <div id="plates-container-${i}">
+                        <div class="plate-row">
+                            <input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${i}, 0, 'val', this.value)" inputmode="decimal">
+                            <input type="number" value="1" min="1" class="split-box" oninput="updatePlate(${i}, 0, 'div', this.value)" inputmode="numeric">
+                        </div>
+                    </div>
                     <button class="btn-small" onclick="addPlateInput(${i})">+ ADD PLATE</button>
                 `;
                 container.appendChild(div);
             }
         }
 
-        function updatePlate(pIdx, plIdx, val) { peopleData[pIdx].plates[plIdx] = parseFloat(val) || 0; }
-        function updateCommon(idx, val) { commonItems[idx] = parseFloat(val) || 0; }
+        function updatePlate(pIdx, plIdx, key, val) {
+            peopleData[pIdx].plates[plIdx][key] = parseFloat(val) || (key === 'div' ? 1 : 0);
+        }
 
         function addPlateInput(pIdx) {
             const plIdx = peopleData[pIdx].plates.length;
-            peopleData[pIdx].plates.push(0);
-            const input = document.createElement('input');
-            input.type = 'number'; input.step = '0.01'; input.placeholder = 'EGP'; input.inputMode = 'decimal';
-            input.oninput = (e) => updatePlate(pIdx, plIdx, e.target.value);
-            document.getElementById(`plates-container-${pIdx}`).appendChild(input);
+            peopleData[pIdx].plates.push({val: 0, div: 1});
+            const row = document.createElement('div');
+            row.className = 'plate-row';
+            row.innerHTML = `
+                <input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
+                <input type="number" value="1" min="1" class="split-box" oninput="updatePlate(${pIdx}, ${plIdx}, 'div', this.value)" inputmode="numeric">
+            `;
+            document.getElementById(`plates-container-${pIdx}`).appendChild(row);
         }
 
+        function updateCommon(idx, val) { commonItems[idx] = parseFloat(val) || 0; }
         function addCommonItem() {
             const idx = commonItems.length; commonItems.push(0);
             const input = document.createElement('input');
@@ -205,8 +187,7 @@
             const numPeople = peopleData.length;
             const useService = document.getElementById('serviceToggle').checked;
             const useTax = document.getElementById('taxToggle').checked;
-            const totalCommon = commonItems.reduce((a, b) => a + b, 0);
-            const sharePerPerson = totalCommon / numPeople;
+            const sharePerPerson = commonItems.reduce((a, b) => a + b, 0) / numPeople;
             const tipPerPerson = (parseFloat(document.getElementById('totalTipValue').value) || 0) / numPeople;
             
             let totalRoundedSum = 0;
@@ -214,7 +195,9 @@
             resultsList.innerHTML = '';
 
             peopleData.forEach((person, i) => {
-                const foodSubtotal = person.plates.reduce((a, b) => a + b, 0) + sharePerPerson;
+                const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
+                const foodSubtotal = individualFood + sharePerPerson;
+                
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 
@@ -256,10 +239,6 @@
             });
             msg += `\n*Grand Total: ${document.getElementById('grandTotalDisplay').innerText} EGP*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
         }
     </script>
 </body>
