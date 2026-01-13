@@ -34,7 +34,7 @@
         .page { 
             display: none; width: 100%; min-height: 100vh;
             padding: 20px; box-sizing: border-box; 
-            padding-bottom: calc(90px + var(--safe-area-bottom));
+            padding-bottom: calc(120px + var(--safe-area-bottom)); /* More space for taller bottom bar */
             opacity: 0; transition: opacity 0.2s ease-in-out;
         }
         
@@ -63,17 +63,30 @@
         }
         input:focus { border-color: var(--md-sys-color-primary); outline: none; box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.1); }
 
-        /* --- ROW STYLING --- */
+        /* --- STEPPER & ROW STYLING --- */
         .plate-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-        .split-box { width: 60px !important; text-align: center; font-weight: bold; color: var(--md-sys-color-primary); padding: 16px 5px !important; }
+        
+        .stepper {
+            display: flex; align-items: center; background: white;
+            border-radius: 12px; height: 54px; margin: 8px 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .stepper-btn {
+            background: none; border: none; font-size: 1.2rem; font-weight: bold;
+            color: var(--md-sys-color-primary); width: 35px; height: 100%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .stepper-val { font-weight: 700; width: 20px; text-align: center; font-size: 1rem; }
+
         .btn-remove {
             background: #ffebee; color: var(--md-sys-color-error);
             border: none; border-radius: 12px;
-            width: 44px; height: 54px; /* Matches input height */
+            width: 44px; height: 54px;
             font-size: 1.5rem; line-height: 1; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
         }
 
+        /* --- TOGGLES --- */
         .switch-group { display: flex; flex-direction: column; gap: 16px; margin: 15px 0; }
         .switch-container { display: flex; justify-content: space-between; align-items: center; }
         .switch { position: relative; display: inline-block; width: 52px; height: 32px; }
@@ -83,12 +96,22 @@
         input:checked + .slider { background-color: var(--md-sys-color-primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
+        /* --- BOTTOM BAR --- */
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 16px 24px; padding-bottom: max(16px, var(--safe-area-bottom));
-            display: flex; gap: 12px; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 1000;
+            padding: 12px 24px; padding-bottom: max(16px, var(--safe-area-bottom));
+            display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 1000;
         }
+        
+        .live-total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.9rem; color: #555; padding: 0 4px;
+        }
+        .live-total-val { font-weight: 700; color: var(--md-sys-color-primary); font-size: 1.1rem; }
+
+        .action-row { display: flex; gap: 12px; }
 
         button:active { transform: scale(0.98); opacity: 0.9; }
 
@@ -98,6 +121,7 @@
         .btn-whatsapp { background: var(--md-sys-color-whatsapp); color: white; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
         .btn-small { background: none; color: var(--md-sys-color-primary); border: none; font-weight: 700; padding: 12px; cursor: pointer; width: 100%; }
 
+        /* --- RESULTS --- */
         .result-item { padding: 16px 0; border-bottom: 1px solid #EEE; }
         .payment-status { font-weight: 700; font-size: 0.85rem; margin-top: 6px; display: inline-block; padding: 4px 8px; border-radius: 6px; }
         .owed { color: var(--md-sys-color-error); background: #fce8e6; }
@@ -109,11 +133,13 @@
 <body>
 
     <div id="page1" class="page active">
-        <h2 style="margin-top: 60px;">Split EGP</h2>
+        <h2 style="margin-top: 60px;">Split EGP Pro</h2>
         <div class="card">
             <span class="label">Number of People</span>
             <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="How many people?">
-            <button class="btn-full btn-primary" onclick="initApp()" style="margin-top: 20px;">Get Started</button>
+            <div class="bottom-bar" style="position:static; background:transparent; box-shadow:none; padding:0; margin-top:20px;">
+                <button class="btn-full btn-primary" onclick="initApp()">Get Started</button>
+            </div>
         </div>
     </div>
 
@@ -123,27 +149,34 @@
         
         <div class="card" style="border: 2px dashed var(--md-sys-color-primary);">
             <span class="label">Shared Items</span>
-            <div id="commonContainer"></div> <button class="btn-small" onclick="vibrate(); addCommonItem()">+ ADD SHARED ITEM</button>
+            <div id="commonContainer"></div>
+            <button class="btn-small" onclick="vibrate(); addCommonItem()">+ ADD SHARED ITEM</button>
         </div>
 
         <div class="card">
             <div class="switch-group">
                 <div class="switch-container">
                     <span style="font-weight: 500;">Service Charge (12%)</span>
-                    <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); saveState()"><span class="slider"></span></label>
+                    <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateLiveTotal(); saveState()"><span class="slider"></span></label>
                 </div>
                 <div class="switch-container">
                     <span style="font-weight: 500;">VAT Tax (14%)</span>
-                    <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); saveState()"><span class="slider"></span></label>
+                    <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateLiveTotal(); saveState()"><span class="slider"></span></label>
                 </div>
             </div>
             <span class="label">Total Table Tip</span>
-            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="saveState()">
+            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="updateLiveTotal(); saveState()">
         </div>
 
         <div class="bottom-bar">
-            <button class="btn-full btn-tonal" onclick="vibrate(); resetAndGoBack()">Back</button>
-            <button class="btn-full btn-primary" onclick="vibrate(); calculateAndShowResults()">Calculate</button>
+            <div class="live-total-row">
+                <span>Bill Total:</span>
+                <span id="liveTotalDisplay" class="live-total-val">0 EGP</span>
+            </div>
+            <div class="action-row">
+                <button class="btn-full btn-tonal" onclick="vibrate(); resetAndGoBack()">Back</button>
+                <button class="btn-full btn-primary" onclick="vibrate(); calculateAndShowResults()">Calculate</button>
+            </div>
         </div>
     </div>
 
@@ -157,8 +190,10 @@
         </div>
 
         <div class="bottom-bar">
-            <button class="btn-full btn-tonal" onclick="vibrate(); showPage(2)">Back</button>
-            <button class="btn-full btn-whatsapp" onclick="vibrate(); shareToWhatsApp()">Share to WhatsApp</button>
+            <div class="action-row">
+                <button class="btn-full btn-tonal" onclick="vibrate(); showPage(2)">Back</button>
+                <button class="btn-full btn-whatsapp" onclick="vibrate(); shareToWhatsApp()">Share to WhatsApp</button>
+            </div>
         </div>
     </div>
 
@@ -197,7 +232,6 @@
             peopleData = data.peopleData;
             commonItems = data.commonItems;
             
-            // Render Structure
             const container = document.getElementById('peopleInputsContainer');
             container.innerHTML = '';
             peopleData.forEach((person, pIdx) => {
@@ -205,7 +239,7 @@
                 div.className = 'card';
                 div.innerHTML = `
                     <input type="text" value="${person.name}" onchange="peopleData[${pIdx}].name = this.value; saveState()" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Divide by</span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Split</span></div>
                     <div id="plates-container-${pIdx}"></div>
                     <button class="btn-small" onclick="vibrate(); addPlateInput(${pIdx})">+ ADD PLATE</button>
                 `;
@@ -214,11 +248,11 @@
             });
 
             renderCommon();
-
             document.getElementById('serviceToggle').checked = data.service;
             document.getElementById('taxToggle').checked = data.tax;
             document.getElementById('totalTipValue').value = data.tip;
 
+            updateLiveTotal();
             showPage(data.currentPage);
             if(data.currentPage === 3) calculateAndShowResults();
         }
@@ -235,20 +269,43 @@
             saveState(num);
         }
 
-        // --- RENDER FUNCTIONS (Handles UI Updates for Add/Remove) ---
+        // --- LIVE TOTAL LOGIC ---
+        function updateLiveTotal() {
+            const numPeople = Math.max(1, peopleData.length);
+            const useService = document.getElementById('serviceToggle').checked;
+            const useTax = document.getElementById('taxToggle').checked;
+            const tipTotal = parseFloat(document.getElementById('totalTipValue').value) || 0;
+            const commonTotal = commonItems.reduce((a, b) => a + b, 0);
 
+            let grandTotal = 0;
+            const sharePerPerson = commonTotal / numPeople;
+            const tipPerPerson = tipTotal / numPeople;
+
+            peopleData.forEach(person => {
+                const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
+                const foodSubtotal = individualFood + sharePerPerson;
+                const service = useService ? (foodSubtotal * 0.12) : 0;
+                const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
+                grandTotal += Math.round(foodSubtotal + service + tax + tipPerPerson);
+            });
+
+            document.getElementById('liveTotalDisplay').innerText = grandTotal + " EGP";
+        }
+
+        // --- RENDER LOGIC ---
         function renderPlates(pIdx) {
             const container = document.getElementById(`plates-container-${pIdx}`);
             container.innerHTML = '';
             peopleData[pIdx].plates.forEach((plate, plIdx) => {
                 const row = document.createElement('div');
                 row.className = 'plate-row';
-                // Only show remove button if there's more than 1 plate, OR always show it? 
-                // Let's always show it, but if it's the last one, maybe we handle empty array?
-                // For simplicity, we allow deleting all. If empty, it's 0.
                 row.innerHTML = `
                     <input type="number" step="0.01" value="${plate.val || ''}" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
-                    <input type="number" value="${plate.div}" min="1" class="split-box" oninput="updatePlate(${pIdx}, ${plIdx}, 'div', this.value)" inputmode="numeric">
+                    <div class="stepper">
+                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, -1)">-</button>
+                        <span class="stepper-val">${plate.div}</span>
+                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, 1)">+</button>
+                    </div>
                     <button class="btn-remove" onclick="removePlate(${pIdx}, ${plIdx})">×</button>
                 `;
                 container.appendChild(row);
@@ -270,7 +327,6 @@
         }
 
         // --- DATA MANIPULATION ---
-
         function initApp() {
             vibrate();
             const count = document.getElementById('peopleCount').value;
@@ -283,14 +339,14 @@
             const container = document.getElementById('peopleInputsContainer');
             container.innerHTML = '';
             peopleData = [];
-            commonItems = [0]; // Reset common
+            commonItems = [0];
             for (let i = 0; i < count; i++) {
                 peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: 0 });
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
                     <input type="text" value="Person ${i+1}" onchange="peopleData[${i}].name = this.value; saveState()" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Divide by</span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Split</span></div>
                     <div id="plates-container-${i}"></div>
                     <button class="btn-small" onclick="vibrate(); addPlateInput(${i})">+ ADD PLATE</button>
                 `;
@@ -298,6 +354,7 @@
                 renderPlates(i);
             }
             renderCommon();
+            updateLiveTotal();
             saveState();
         }
 
@@ -311,11 +368,24 @@
             vibrate();
             peopleData[pIdx].plates.splice(plIdx, 1);
             renderPlates(pIdx);
+            updateLiveTotal();
             saveState();
         }
 
         function updatePlate(pIdx, plIdx, key, val) {
             peopleData[pIdx].plates[plIdx][key] = parseFloat(val) || (key === 'div' ? 1 : 0);
+            updateLiveTotal();
+            saveState();
+        }
+
+        function updateSplit(pIdx, plIdx, delta) {
+            vibrate();
+            let current = peopleData[pIdx].plates[plIdx].div;
+            let newVal = current + delta;
+            if (newVal < 1) newVal = 1;
+            peopleData[pIdx].plates[plIdx].div = newVal;
+            renderPlates(pIdx); // Re-render to show new number
+            updateLiveTotal();
             saveState();
         }
 
@@ -329,11 +399,13 @@
             vibrate();
             commonItems.splice(idx, 1);
             renderCommon();
+            updateLiveTotal();
             saveState();
         }
 
         function updateCommon(idx, val) { 
             commonItems[idx] = parseFloat(val) || 0; 
+            updateLiveTotal();
             saveState();
         }
 
@@ -350,15 +422,21 @@
         }
 
         function calculateAndShowResults() {
-            const numPeople = peopleData.length;
-            const useService = document.getElementById('serviceToggle').checked;
-            const useTax = document.getElementById('taxToggle').checked;
-            const sharePerPerson = commonItems.reduce((a, b) => a + b, 0) / numPeople;
-            const tipPerPerson = (parseFloat(document.getElementById('totalTipValue').value) || 0) / numPeople;
-            
-            let totalRoundedSum = 0;
+            // Live total function already calculates the logic, we just render page 3
+            updateLiveTotal();
             const resultsList = document.getElementById('resultsList');
             resultsList.innerHTML = '';
+            
+            // Re-run logic for detailed list
+            const numPeople = Math.max(1, peopleData.length);
+            const useService = document.getElementById('serviceToggle').checked;
+            const useTax = document.getElementById('taxToggle').checked;
+            const tipTotal = parseFloat(document.getElementById('totalTipValue').value) || 0;
+            const commonTotal = commonItems.reduce((a, b) => a + b, 0);
+            const sharePerPerson = commonTotal / numPeople;
+            const tipPerPerson = tipTotal / numPeople;
+            
+            let totalRoundedSum = 0;
 
             peopleData.forEach((person, i) => {
                 const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
