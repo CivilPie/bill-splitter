@@ -12,14 +12,12 @@
     <style>
         :root {
             --md-sys-color-primary: #6750A4;
-            --md-sys-color-on-primary: #FFFFFF;
             --md-sys-color-surface: #fef7ff;
             --md-sys-color-surface-container: #f3edf7;
             --md-sys-color-secondary-container: #e8def8;
             --md-sys-color-whatsapp: #25D366;
             --md-sys-color-error: #B3261E;
             --md-sys-color-success: #2E7D32;
-            /* Safe area for iPhone notch/home bar */
             --safe-area-bottom: env(safe-area-inset-bottom, 20px);
         }
 
@@ -29,32 +27,26 @@
             color: #1C1B1F;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            overscroll-behavior-y: none; /* Prevents "bounce" effect */
-            -webkit-tap-highlight-color: transparent; /* Removes blue tap box */
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- NAVIGATION & ANIMATION --- */
         .page { 
             display: none; width: 100%; min-height: 100vh;
             padding: 20px; box-sizing: border-box; 
-            padding-bottom: calc(90px + var(--safe-area-bottom)); /* Space for sticky bar */
+            padding-bottom: calc(90px + var(--safe-area-bottom));
             opacity: 0; transition: opacity 0.2s ease-in-out;
         }
         
         .active { 
-            display: block; 
-            opacity: 1;
+            display: block; opacity: 1;
             animation: slideUp 0.3s cubic-bezier(0.2, 0.0, 0, 1.0); 
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         h2 { font-weight: 500; color: var(--md-sys-color-primary); text-align: center; margin-bottom: 24px; }
 
-        /* --- CARDS & INPUTS --- */
         .card { 
             background: var(--md-sys-color-surface-container); 
             padding: 20px; border-radius: 24px; margin-bottom: 16px; 
@@ -67,13 +59,20 @@
             background: white; border: 1.5px solid transparent; border-radius: 16px; 
             padding: 16px; margin: 8px 0; width: 100%; box-sizing: border-box; 
             font-size: 16px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            appearance: none; /* Native clean input */
+            appearance: none;
         }
         input:focus { border-color: var(--md-sys-color-primary); outline: none; box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.1); }
 
-        /* --- CUSTOM CONTROLS --- */
-        .plate-row { display: flex; gap: 8px; align-items: center; }
-        .split-box { width: 70px !important; text-align: center; font-weight: bold; color: var(--md-sys-color-primary); }
+        /* --- ROW STYLING --- */
+        .plate-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .split-box { width: 60px !important; text-align: center; font-weight: bold; color: var(--md-sys-color-primary); padding: 16px 5px !important; }
+        .btn-remove {
+            background: #ffebee; color: var(--md-sys-color-error);
+            border: none; border-radius: 12px;
+            width: 44px; height: 54px; /* Matches input height */
+            font-size: 1.5rem; line-height: 1; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
 
         .switch-group { display: flex; flex-direction: column; gap: 16px; margin: 15px 0; }
         .switch-container { display: flex; justify-content: space-between; align-items: center; }
@@ -84,39 +83,25 @@
         input:checked + .slider { background-color: var(--md-sys-color-primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- STICKY BOTTOM BAR --- */
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); /* Frosted glass effect */
-            padding: 16px 24px;
-            padding-bottom: max(16px, var(--safe-area-bottom)); /* iPhone Safe Area */
-            display: flex; gap: 12px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 16px 24px; padding-bottom: max(16px, var(--safe-area-bottom));
+            display: flex; gap: 12px; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 1000;
         }
 
-        button:active { transform: scale(0.98); opacity: 0.9; } /* Touch feedback */
+        button:active { transform: scale(0.98); opacity: 0.9; }
 
-        .btn-full { 
-            flex: 1; border-radius: 100px; padding: 16px; 
-            font-weight: 600; border: none; cursor: pointer; font-size: 1rem; 
-            letter-spacing: 0.5px; transition: transform 0.1s;
-        }
+        .btn-full { flex: 1; border-radius: 100px; padding: 16px; font-weight: 600; border: none; cursor: pointer; font-size: 1rem; letter-spacing: 0.5px; }
         .btn-primary { background: var(--md-sys-color-primary); color: white; box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3); }
         .btn-tonal { background: var(--md-sys-color-secondary-container); color: #1D192B; }
         .btn-whatsapp { background: var(--md-sys-color-whatsapp); color: white; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-        .btn-small { 
-            background: none; color: var(--md-sys-color-primary); border: none; 
-            font-weight: 700; padding: 12px; cursor: pointer; width: 100%;
-        }
+        .btn-small { background: none; color: var(--md-sys-color-primary); border: none; font-weight: 700; padding: 12px; cursor: pointer; width: 100%; }
 
-        /* --- RESULTS --- */
         .result-item { padding: 16px 0; border-bottom: 1px solid #EEE; }
-        .payment-status { font-weight: 700; font-size: 0.85rem; margin-top: 6px; display: inline-block; padding: 4px 8px; border-radius: 6px; background: #f5f5f5; }
+        .payment-status { font-weight: 700; font-size: 0.85rem; margin-top: 6px; display: inline-block; padding: 4px 8px; border-radius: 6px; }
         .owed { color: var(--md-sys-color-error); background: #fce8e6; }
         .change { color: var(--md-sys-color-success); background: #e8f5e9; }
-        
         .paid-input-mini { width: 90px !important; padding: 10px !important; margin: 0 !important; font-weight: bold; text-align: right; }
         .grand-total { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; color: var(--md-sys-color-primary); letter-spacing: -1px; }
     </style>
@@ -124,7 +109,7 @@
 <body>
 
     <div id="page1" class="page active">
-        <h2 style="margin-top: 60px;">Split Bill</h2>
+        <h2 style="margin-top: 60px;">Split EGP</h2>
         <div class="card">
             <span class="label">Number of People</span>
             <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="How many people?">
@@ -137,11 +122,8 @@
         <div id="peopleInputsContainer"></div>
         
         <div class="card" style="border: 2px dashed var(--md-sys-color-primary);">
-            <span class="label">Shared Items (Water, Appetizers)</span>
-            <div id="commonContainer">
-                <input type="number" step="0.01" placeholder="Price (EGP)" oninput="updateCommon(0, this.value)" inputmode="decimal">
-            </div>
-            <button class="btn-small" onclick="addCommonItem()">+ ADD SHARED ITEM</button>
+            <span class="label">Shared Items</span>
+            <div id="commonContainer"></div> <button class="btn-small" onclick="vibrate(); addCommonItem()">+ ADD SHARED ITEM</button>
         </div>
 
         <div class="card">
@@ -155,7 +137,7 @@
                     <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); saveState()"><span class="slider"></span></label>
                 </div>
             </div>
-            <span class="label">Total Table Tip (Baksheesh)</span>
+            <span class="label">Total Table Tip</span>
             <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="saveState()">
         </div>
 
@@ -171,13 +153,12 @@
             <div id="resultsList"></div>
             <div class="grand-total" id="grandTotalDisplay">0</div>
             <div style="text-align: center; font-size: 0.8rem; color: #888; font-weight: 700; margin-top: -5px;">TOTAL EGP</div>
-            
             <button onclick="vibrate(); resetAndGoBack()" style="background:none; border:none; color:var(--md-sys-color-error); font-weight:700; width:100%; margin-top:24px; padding:12px;">🗑 START NEW BILL</button>
         </div>
 
         <div class="bottom-bar">
             <button class="btn-full btn-tonal" onclick="vibrate(); showPage(2)">Back</button>
-            <button class="btn-full btn-whatsapp" onclick="vibrate(); shareToWhatsApp()">WhatsApp</button>
+            <button class="btn-full btn-whatsapp" onclick="vibrate(); shareToWhatsApp()">Share to WhatsApp</button>
         </div>
     </div>
 
@@ -185,12 +166,8 @@
         let peopleData = [];
         let commonItems = [0];
 
-        // --- UX HELPERS ---
-        function vibrate() {
-            if (navigator.vibrate) navigator.vibrate(5); // Slight haptic tick (Android only)
-        }
+        function vibrate() { if (navigator.vibrate) navigator.vibrate(5); }
 
-        // --- STORAGE & NAVIGATION ---
         window.onload = function() {
             const saved = localStorage.getItem('splitEgpData');
             if (saved) {
@@ -220,6 +197,7 @@
             peopleData = data.peopleData;
             commonItems = data.commonItems;
             
+            // Render Structure
             const container = document.getElementById('peopleInputsContainer');
             container.innerHTML = '';
             peopleData.forEach((person, pIdx) => {
@@ -232,27 +210,10 @@
                     <button class="btn-small" onclick="vibrate(); addPlateInput(${pIdx})">+ ADD PLATE</button>
                 `;
                 container.appendChild(div);
-                
-                const platesCont = document.getElementById(`plates-container-${pIdx}`);
-                person.plates.forEach((plate, plIdx) => {
-                    const row = document.createElement('div');
-                    row.className = 'plate-row';
-                    row.innerHTML = `
-                        <input type="number" step="0.01" value="${plate.val || ''}" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
-                        <input type="number" value="${plate.div}" min="1" class="split-box" oninput="updatePlate(${pIdx}, ${plIdx}, 'div', this.value)" inputmode="numeric">
-                    `;
-                    platesCont.appendChild(row);
-                });
+                renderPlates(pIdx);
             });
 
-            const commonCont = document.getElementById('commonContainer');
-            commonCont.innerHTML = '';
-            commonItems.forEach((val, idx) => {
-                const input = document.createElement('input');
-                input.type = 'number'; input.step = '0.01'; input.value = val || ''; input.placeholder = 'EGP'; input.inputMode = 'decimal';
-                input.oninput = (e) => updateCommon(idx, e.target.value);
-                commonCont.appendChild(input);
-            });
+            renderCommon();
 
             document.getElementById('serviceToggle').checked = data.service;
             document.getElementById('taxToggle').checked = data.tax;
@@ -274,7 +235,42 @@
             saveState(num);
         }
 
-        // --- CORE LOGIC ---
+        // --- RENDER FUNCTIONS (Handles UI Updates for Add/Remove) ---
+
+        function renderPlates(pIdx) {
+            const container = document.getElementById(`plates-container-${pIdx}`);
+            container.innerHTML = '';
+            peopleData[pIdx].plates.forEach((plate, plIdx) => {
+                const row = document.createElement('div');
+                row.className = 'plate-row';
+                // Only show remove button if there's more than 1 plate, OR always show it? 
+                // Let's always show it, but if it's the last one, maybe we handle empty array?
+                // For simplicity, we allow deleting all. If empty, it's 0.
+                row.innerHTML = `
+                    <input type="number" step="0.01" value="${plate.val || ''}" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
+                    <input type="number" value="${plate.div}" min="1" class="split-box" oninput="updatePlate(${pIdx}, ${plIdx}, 'div', this.value)" inputmode="numeric">
+                    <button class="btn-remove" onclick="removePlate(${pIdx}, ${plIdx})">×</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function renderCommon() {
+            const container = document.getElementById('commonContainer');
+            container.innerHTML = '';
+            commonItems.forEach((val, idx) => {
+                const row = document.createElement('div');
+                row.className = 'plate-row';
+                row.innerHTML = `
+                    <input type="number" step="0.01" value="${val || ''}" placeholder="EGP" oninput="updateCommon(${idx}, this.value)" inputmode="decimal">
+                    <button class="btn-remove" onclick="removeCommon(${idx})">×</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // --- DATA MANIPULATION ---
+
         function initApp() {
             vibrate();
             const count = document.getElementById('peopleCount').value;
@@ -287,6 +283,7 @@
             const container = document.getElementById('peopleInputsContainer');
             container.innerHTML = '';
             peopleData = [];
+            commonItems = [0]; // Reset common
             for (let i = 0; i < count; i++) {
                 peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: 0 });
                 const div = document.createElement('div');
@@ -294,16 +291,26 @@
                 div.innerHTML = `
                     <input type="text" value="Person ${i+1}" onchange="peopleData[${i}].name = this.value; saveState()" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Divide by</span></div>
-                    <div id="plates-container-${i}">
-                        <div class="plate-row">
-                            <input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${i}, 0, 'val', this.value)" inputmode="decimal">
-                            <input type="number" value="1" min="1" class="split-box" oninput="updatePlate(${i}, 0, 'div', this.value)" inputmode="numeric">
-                        </div>
-                    </div>
+                    <div id="plates-container-${i}"></div>
                     <button class="btn-small" onclick="vibrate(); addPlateInput(${i})">+ ADD PLATE</button>
                 `;
                 container.appendChild(div);
+                renderPlates(i);
             }
+            renderCommon();
+            saveState();
+        }
+
+        function addPlateInput(pIdx) {
+            peopleData[pIdx].plates.push({val: 0, div: 1});
+            renderPlates(pIdx);
+            saveState();
+        }
+
+        function removePlate(pIdx, plIdx) {
+            vibrate();
+            peopleData[pIdx].plates.splice(plIdx, 1);
+            renderPlates(pIdx);
             saveState();
         }
 
@@ -312,31 +319,21 @@
             saveState();
         }
 
-        function addPlateInput(pIdx) {
-            const plIdx = peopleData[pIdx].plates.length;
-            peopleData[pIdx].plates.push({val: 0, div: 1});
-            const row = document.createElement('div');
-            row.className = 'plate-row';
-            row.innerHTML = `
-                <input type="number" step="0.01" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
-                <input type="number" value="1" min="1" class="split-box" oninput="updatePlate(${pIdx}, ${plIdx}, 'div', this.value)" inputmode="numeric">
-            `;
-            document.getElementById(`plates-container-${pIdx}`).appendChild(row);
+        function addCommonItem() {
+            commonItems.push(0);
+            renderCommon();
+            saveState();
+        }
+
+        function removeCommon(idx) {
+            vibrate();
+            commonItems.splice(idx, 1);
+            renderCommon();
             saveState();
         }
 
         function updateCommon(idx, val) { 
             commonItems[idx] = parseFloat(val) || 0; 
-            saveState();
-        }
-
-        function addCommonItem() {
-            vibrate();
-            const idx = commonItems.length; commonItems.push(0);
-            const input = document.createElement('input');
-            input.type = 'number'; input.step = '0.01'; input.placeholder = 'EGP'; input.inputMode = 'decimal';
-            input.oninput = (e) => updateCommon(idx, e.target.value);
-            document.getElementById('commonContainer').appendChild(input);
             saveState();
         }
 
