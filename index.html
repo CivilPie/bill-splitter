@@ -5,26 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#fef7ff">
-    <title>Split EGP Pro</title>
+    <meta name="theme-color" content="#FFFBFE">
+    <title>Split EGP M3</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    
     <style>
         :root {
             --md-sys-color-primary: #6750A4;
-            --md-sys-color-surface: #fef7ff;
-            --md-sys-color-surface-container: #f3edf7;
-            --md-sys-color-secondary-container: #e8def8;
-            --md-sys-color-whatsapp: #25D366;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            
+            --md-sys-color-secondary: #625B71;
+            --md-sys-color-secondary-container: #E8DEF8;
+            --md-sys-color-on-secondary-container: #1D192B;
+            
             --md-sys-color-error: #B3261E;
-            --md-sys-color-success: #2E7D32;
+            --md-sys-color-error-container: #F9DEDC;
+            
+            --md-sys-color-background: #FFFBFE;
+            --md-sys-color-surface: #FFFBFE;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface: #1C1B1F;
+            --md-sys-color-on-surface-variant: #49454F;
+            
+            --md-sys-color-outline: #79747E;
+
             --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+            --radius-l: 28px;
+            --radius-m: 16px;
+            --radius-s: 12px;
         }
 
         body { 
             font-family: 'Roboto', sans-serif; 
-            background-color: var(--md-sys-color-surface);
-            color: #1C1B1F;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-surface);
             margin: 0; padding: 0;
             overflow-x: hidden;
             overscroll-behavior-y: none;
@@ -33,210 +51,243 @@
 
         .page { 
             display: none; width: 100%; min-height: 100vh;
-            padding: 20px; box-sizing: border-box; 
-            padding-bottom: calc(130px + var(--safe-area-bottom));
-            opacity: 0; transition: opacity 0.2s ease-in-out;
+            padding: 24px 16px; box-sizing: border-box; 
+            padding-bottom: calc(150px + var(--safe-area-bottom));
+            opacity: 0; transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
         
         .active { 
             display: block; opacity: 1;
-            animation: slideUp 0.3s cubic-bezier(0.2, 0.0, 0, 1.0); 
+            animation: slideUp 0.4s cubic-bezier(0.05, 0.7, 0.1, 1); 
         }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { 
+            from { transform: translateY(40px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
 
-        h2 { font-weight: 500; color: var(--md-sys-color-primary); text-align: center; margin-bottom: 24px; }
+        h2 { 
+            font-size: 32px; font-weight: 400; line-height: 40px; 
+            color: var(--md-sys-color-on-surface); 
+            margin: 40px 0 24px 0;
+            text-align: left;
+        }
+        
+        .label { 
+            font-size: 12px; font-weight: 500; letter-spacing: 0.5px; 
+            color: var(--md-sys-color-on-surface-variant); 
+            text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 12px;
+        }
 
         .card { 
-            background: var(--md-sys-color-surface-container); 
-            padding: 20px; border-radius: 24px; margin-bottom: 16px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background: var(--md-sys-color-surface); 
+            border: 1px solid #E7E0EC;
+            padding: 16px; border-radius: var(--radius-l); margin-bottom: 12px; 
+            background-color: #FDF8FD;
         }
-
-        .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--md-sys-color-primary); display: block; margin-top: 10px; letter-spacing: 0.5px; }
+        .card-filled {
+            background-color: var(--md-sys-color-secondary-container);
+            border: none;
+            color: var(--md-sys-color-on-secondary-container);
+        }
 
         input { 
-            background: white; border: 1.5px solid transparent; border-radius: 16px; 
-            padding: 16px; margin: 8px 0; width: 100%; box-sizing: border-box; 
-            font-size: 16px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            appearance: none;
+            background: var(--md-sys-color-surface-variant); 
+            border: none; border-bottom: 2px solid transparent;
+            border-radius: 4px 4px 0 0;
+            padding: 16px; margin: 0; width: 100%; box-sizing: border-box; 
+            font-size: 16px; color: var(--md-sys-color-on-surface);
+            transition: all 0.2s;
         }
-        input:focus { border-color: var(--md-sys-color-primary); outline: none; box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.1); }
+        input:focus { 
+            border-bottom-color: var(--md-sys-color-primary); 
+            background: #D0BCFF; outline: none; 
+        }
+        .input-group { border-radius: var(--radius-s); overflow: hidden; margin-bottom: 8px; }
 
-        /* --- STEPPER & ROW STYLING --- */
+        .btn-tonal {
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+            border-radius: 100px; padding: 12px 24px; border: none;
+            font-weight: 500; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-tonal:active { transform: scale(0.98); }
+
+        .btn-fab {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border-radius: 16px;
+            padding: 16px 24px; border: none;
+            font-size: 16px; font-weight: 500;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            flex: 1;
+        }
+        
+        .btn-icon { font-family: 'Material Symbols Rounded'; font-size: 20px; }
+
         .plate-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         
         .stepper {
-            display: flex; align-items: center; background: white;
-            border-radius: 12px; height: 54px; margin: 8px 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex; align-items: center; background: var(--md-sys-color-surface-variant);
+            border-radius: var(--radius-m); height: 56px; width: 100px;
         }
         .stepper-btn {
-            background: none; border: none; font-size: 1.2rem; font-weight: bold;
-            color: var(--md-sys-color-primary); width: 35px; height: 100%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            background: none; border: none; color: var(--md-sys-color-on-surface);
+            width: 35px; height: 100%; font-size: 1.2rem; cursor: pointer;
         }
-        .stepper-val { font-weight: 700; width: 20px; text-align: center; font-size: 1rem; }
+        .stepper-val { flex: 1; text-align: center; font-weight: 700; }
 
         .btn-remove {
-            background: #ffebee; color: var(--md-sys-color-error);
-            border: none; border-radius: 12px;
-            width: 44px; height: 54px;
-            font-size: 1.5rem; line-height: 1; cursor: pointer;
+            background: var(--md-sys-color-error-container); color: var(--md-sys-color-error);
+            border: none; border-radius: var(--radius-m);
+            width: 48px; height: 56px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- TOGGLES --- */
-        .switch-group { display: flex; flex-direction: column; gap: 16px; margin: 15px 0; }
-        .switch-container { display: flex; justify-content: space-between; align-items: center; }
+        .switch-container { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
         .switch { position: relative; display: inline-block; width: 52px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E0E0E0; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-outline); transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--md-sys-color-primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: var(--md-sys-color-on-primary); }
 
-        /* --- BOTTOM BAR --- */
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 12px 24px; padding-bottom: max(16px, var(--safe-area-bottom));
-            display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 1000;
+            background: #F3EDF7;
+            padding: 12px 16px; padding-bottom: max(16px, var(--safe-area-bottom));
+            border-radius: 24px 24px 0 0;
+            display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100;
         }
         
-        .live-total-row {
+        .result-item { 
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.85rem; color: #555; padding: 0 4px;
+            background: var(--md-sys-color-surface); 
+            padding: 16px; border-radius: 16px; margin-bottom: 8px;
+            border: 1px solid #E7E0EC;
         }
-        .live-receipt { color: #666; font-weight: 500; }
-        .live-collect { color: var(--md-sys-color-primary); font-weight: 700; font-size: 1.1rem; }
-
-        .action-row { display: flex; gap: 12px; }
-
-        button:active { transform: scale(0.98); opacity: 0.9; }
-
-        .btn-full { flex: 1; border-radius: 100px; padding: 16px; font-weight: 600; border: none; cursor: pointer; font-size: 1rem; letter-spacing: 0.5px; }
-        .btn-primary { background: var(--md-sys-color-primary); color: white; box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3); }
-        .btn-tonal { background: var(--md-sys-color-secondary-container); color: #1D192B; }
-        .btn-whatsapp { background: var(--md-sys-color-whatsapp); color: white; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-        .btn-small { background: none; color: var(--md-sys-color-primary); border: none; font-weight: 700; padding: 12px; cursor: pointer; width: 100%; }
-
-        /* --- RESULTS --- */
-        .result-item { padding: 16px 0; border-bottom: 1px solid #EEE; }
-        .payment-status { font-weight: 700; font-size: 0.85rem; margin-top: 6px; display: inline-block; padding: 4px 8px; border-radius: 6px; }
-        .owed { color: var(--md-sys-color-error); background: #fce8e6; }
-        .change { color: var(--md-sys-color-success); background: #e8f5e9; }
-        
-        .paid-input-mini { 
-            width: 80px !important; padding: 10px !important; margin: 0 !important; 
-            font-weight: bold; text-align: center;
+        .grand-total-card {
+            background: var(--md-sys-color-primary); color: white;
+            padding: 32px; border-radius: 32px; text-align: center;
+            margin-bottom: 24px;
         }
-
-        /* The Quick Pay Checkmark Button */
         .btn-check {
-            background: var(--md-sys-color-success); color: white;
-            border: none; border-radius: 12px;
-            width: 42px; height: 42px; 
-            font-size: 1.2rem; cursor: pointer;
+            background: var(--md-sys-color-primary-container); 
+            color: var(--md-sys-color-on-primary-container);
+            border: none; border-radius: 12px; width: 44px; height: 44px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .paid-input-mini { 
+            background: #F5F5F5; border-radius: 8px; text-align: center; font-weight: bold;
         }
         
-        .grand-total { 
-            font-size: 3rem; font-weight: 700; text-align: center; 
-            margin: 0; color: var(--md-sys-color-primary); 
-            letter-spacing: -1px; line-height: 1.2;
+        /* Stats row for bottom bar */
+        .stats-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 8px; font-size: 0.9rem;
         }
-        .total-label {
-            text-align: center; font-size: 0.75rem; color: #888; 
-            font-weight: 700; margin-bottom: 20px; display: block;
-        }
-        .receipt-total { 
-            font-size: 0.95rem; text-align: center; color: #555; 
-            font-weight: 500; background: #e0e0e0; 
-            padding: 8px 16px; border-radius: 50px;
-            display: inline-block; margin: 0 auto;
-        }
-        .receipt-container { text-align: center; margin-bottom: 24px; }
+        .stat-label { color: var(--md-sys-color-secondary); }
+        .stat-val { font-weight: 700; color: var(--md-sys-color-on-surface); }
+        .stat-val-highlight { font-weight: 700; color: var(--md-sys-color-primary); font-size: 1.1rem; }
+
     </style>
 </head>
 <body>
 
     <div id="page1" class="page active">
-        <h2 style="margin-top: 60px;">Split Bill</h2>
+        <h2>Split Bill</h2>
         <div class="card">
-            <span class="label">Bill Name (Optional)</span>
-            <input type="text" id="billTitle" placeholder="Restaurant Name (e.g. Spectra)" oninput="saveState()">
-            
-            <span class="label" style="margin-top: 20px;">Number of People</span>
-            <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="How many people?">
-            
-            <div class="bottom-bar" style="position:static; background:transparent; box-shadow:none; padding:0; margin-top:20px;">
-                <button class="btn-full btn-primary" onclick="initApp()">Get Started</button>
+            <span class="label">Bill Context</span>
+            <div class="input-group">
+                <input type="text" id="billTitle" placeholder="Location name (e.g. Spectra)" oninput="saveState()">
             </div>
+            
+            <span class="label">Party Size</span>
+            <div class="input-group">
+                <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="Number of people">
+            </div>
+        </div>
+        
+        <div style="position:fixed; bottom:40px; right:20px;">
+            <button class="btn-fab" onclick="initApp()" style="border-radius: 24px; padding: 20px 30px;">
+                <span class="btn-icon">arrow_forward</span> Start
+            </button>
         </div>
     </div>
 
     <div id="page2" class="page">
-        <h2>Bill Details</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Details</h2>
+            <button class="btn-tonal" onclick="resetAndGoBack()" style="height:40px;"><span class="btn-icon">restart_alt</span> Reset</button>
+        </div>
+
         <div id="peopleInputsContainer"></div>
         
-        <div class="card" style="border: 2px dashed var(--md-sys-color-primary);">
-            <span class="label">Shared Items</span>
-            <div id="commonContainer"></div>
-            <button class="btn-small" onclick="vibrate(); addCommonItem()">+ ADD SHARED ITEM</button>
+        <div class="card card-filled">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold; font-size:1.1rem;">Shared Items</span>
+                <button class="btn-tonal" onclick="vibrate(); addCommonItem()" style="background:white; padding:8px 16px;">
+                    <span class="btn-icon">add</span> Add
+                </button>
+            </div>
+            <div id="commonContainer" style="margin-top:16px;"></div>
         </div>
 
         <div class="card">
-            <div class="switch-group">
-                <div class="switch-container">
-                    <span style="font-weight: 500;">Service Charge (12%)</span>
-                    <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
-                </div>
-                <div class="switch-container">
-                    <span style="font-weight: 500;">VAT Tax (14%)</span>
-                    <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
-                </div>
+            <div class="switch-container">
+                <span style="font-weight: 500;">Service (12%)</span>
+                <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
             </div>
-            <span class="label">Total Table Tip</span>
-            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="updateTotals(); saveState()">
+            <div class="switch-container">
+                <span style="font-weight: 500;">VAT (14%)</span>
+                <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
+            </div>
+            <span class="label">Extra Tip (EGP)</span>
+            <div class="input-group">
+                <input type="number" id="totalTipValue" placeholder="0.00" inputmode="numeric" oninput="updateTotals(); saveState()">
+            </div>
         </div>
 
         <div class="bottom-bar">
-            <div class="live-total-row">
-                <span id="liveReceiptDisplay" class="live-receipt">Receipt: 0.00</span>
-                <span id="liveCollectDisplay" class="live-collect">Collect: 0</span>
+            <div class="stats-row">
+                <span class="stat-label">Receipt</span>
+                <span id="liveReceiptDisplay" class="stat-val">0.00</span>
             </div>
-            <div class="action-row">
-                <button class="btn-full btn-tonal" onclick="vibrate(); resetAndGoBack()">Back</button>
-                <button class="btn-full btn-primary" onclick="vibrate(); calculateAndShowResults()">Calculate</button>
+            <div class="stats-row">
+                <span class="stat-label">Collect</span>
+                <span id="liveCollectDisplay" class="stat-val-highlight">0</span>
             </div>
+            <button class="btn-fab" onclick="vibrate(); calculateAndShowResults()">
+                <span class="btn-icon">payments</span> Calculate
+            </button>
         </div>
     </div>
 
     <div id="page3" class="page">
-        <h2>Payment Summary</h2>
-        <div class="card">
-            <div id="resultsList"></div>
-            
-            <div style="margin-top: 30px; text-align: center;">
-                <div class="grand-total" id="grandTotalDisplay">0</div>
-                <span class="total-label">TOTAL TO COLLECT (ROUNDED)</span>
-                
-                <div class="receipt-container">
-                    <span id="receiptTotalDisplay" class="receipt-total">Exact Receipt: 0.00 EGP</span>
-                </div>
-            </div>
+        <button class="btn-tonal" onclick="showPage(2)" style="margin-bottom:16px;">
+            <span class="btn-icon">arrow_back</span> Edit details
+        </button>
 
-            <button onclick="vibrate(); resetAndGoBack()" style="background:none; border:none; color:var(--md-sys-color-error); font-weight:700; width:100%; margin-top:10px; padding:12px;">🗑 START NEW BILL</button>
+        <div class="grand-total-card">
+            <div style="opacity:0.8; font-size:0.9rem;">TOTAL TO COLLECT</div>
+            <div id="grandTotalDisplay" style="font-size:3.5rem; font-weight:700; line-height:1.1;">0</div>
+            <div id="receiptTotalDisplay" style="background:rgba(255,255,255,0.2); display:inline-block; padding:4px 12px; border-radius:20px; margin-top:12px; font-size:0.9rem;">Receipt: 0.00</div>
         </div>
 
+        <div id="resultsList"></div>
+        
+        <button class="btn-tonal" onclick="vibrate(); resetAndGoBack()" style="width:100%; margin-top:24px; background:var(--md-sys-color-error-container); color:var(--md-sys-color-error);">
+            <span class="btn-icon">delete</span> Start New Bill
+        </button>
+
         <div class="bottom-bar">
-            <div class="action-row">
-                <button class="btn-full btn-tonal" onclick="vibrate(); showPage(2)">Back</button>
-                <button class="btn-full btn-whatsapp" onclick="vibrate(); shareToWhatsApp()">WhatsApp</button>
-            </div>
+            <button class="btn-fab" style="background:#25D366; color:white;" onclick="vibrate(); shareToWhatsApp()">
+                <span class="btn-icon">share</span> WhatsApp
+            </button>
         </div>
     </div>
 
@@ -280,15 +331,7 @@
             const container = document.getElementById('peopleInputsContainer');
             container.innerHTML = '';
             peopleData.forEach((person, pIdx) => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    <input type="text" value="${person.name}" onchange="peopleData[${pIdx}].name = this.value; saveState()" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Split</span></div>
-                    <div id="plates-container-${pIdx}"></div>
-                    <button class="btn-small" onclick="vibrate(); addPlateInput(${pIdx})">+ ADD PLATE</button>
-                `;
-                container.appendChild(div);
+                renderPersonCard(pIdx, person.name);
                 renderPlates(pIdx);
             });
 
@@ -303,8 +346,10 @@
         }
 
         function resetAndGoBack() {
-            localStorage.removeItem('splitEgpData');
-            location.reload(); 
+            if(confirm("Start a new bill?")) {
+                localStorage.removeItem('splitEgpData');
+                location.reload(); 
+            }
         }
 
         function showPage(num) {
@@ -314,7 +359,84 @@
             saveState(num);
         }
 
-        // --- MATH & TOTALS LOGIC ---
+        // --- CORE LOGIC ---
+        function initApp() {
+            vibrate();
+            const count = document.getElementById('peopleCount').value;
+            if(!count || count < 1) return alert("Enter count");
+            generateInputs(count);
+            showPage(2);
+        }
+
+        function generateInputs(count) {
+            const container = document.getElementById('peopleInputsContainer');
+            container.innerHTML = '';
+            peopleData = [];
+            commonItems = [0];
+            for (let i = 0; i < count; i++) {
+                peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: "" });
+                renderPersonCard(i, `Person ${i+1}`);
+                renderPlates(i);
+            }
+            renderCommon();
+            updateTotals();
+            saveState();
+        }
+
+        function renderPersonCard(idx, name) {
+            const container = document.getElementById('peopleInputsContainer');
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+                <div class="input-group" style="margin-bottom:12px;">
+                    <input type="text" value="${name}" onchange="peopleData[${idx}].name = this.value; saveState()" style="font-weight:700; font-size:1.2rem; background:transparent; padding-left:0;">
+                </div>
+                <div id="plates-container-${idx}"></div>
+                <button class="btn-tonal" onclick="vibrate(); addPlateInput(${idx})" style="width:100%; margin-top:12px;">
+                    <span class="btn-icon">add</span> Add Item
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        function renderPlates(pIdx) {
+            const container = document.getElementById(`plates-container-${pIdx}`);
+            container.innerHTML = '';
+            peopleData[pIdx].plates.forEach((plate, plIdx) => {
+                const row = document.createElement('div');
+                row.className = 'plate-row';
+                row.innerHTML = `
+                    <div class="input-group" style="flex:1; margin-bottom:0;">
+                        <input type="number" step="0.01" value="${plate.val || ''}" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
+                    </div>
+                    <div class="stepper">
+                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, -1)">-</button>
+                        <span class="stepper-val">${plate.div}</span>
+                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, 1)">+</button>
+                    </div>
+                    <button class="btn-remove" onclick="removePlate(${pIdx}, ${plIdx})"><span class="btn-icon">close</span></button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function renderCommon() {
+            const container = document.getElementById('commonContainer');
+            container.innerHTML = '';
+            commonItems.forEach((val, idx) => {
+                const row = document.createElement('div');
+                row.className = 'plate-row';
+                row.innerHTML = `
+                    <div class="input-group" style="flex:1; margin-bottom:0;">
+                        <input type="number" step="0.01" value="${val || ''}" placeholder="Price" oninput="updateCommon(${idx}, this.value)" inputmode="decimal">
+                    </div>
+                    <button class="btn-remove" onclick="removeCommon(${idx})"><span class="btn-icon">close</span></button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // --- MATH & UPDATES ---
         function getTotals() {
             const numPeople = Math.max(1, peopleData.length);
             const useService = document.getElementById('serviceToggle').checked;
@@ -331,12 +453,10 @@
             peopleData.forEach(person => {
                 const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
                 const foodSubtotal = individualFood + sharePerPerson;
-                
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 
                 exactReceiptTotal += (foodSubtotal + service + tax);
-                
                 person.roundedTotal = Math.round(foodSubtotal + service + tax + tipPerPerson);
                 collectTotal += person.roundedTotal;
             });
@@ -346,156 +466,18 @@
 
         function updateTotals() {
             const totals = getTotals();
-            document.getElementById('liveReceiptDisplay').innerText = "Receipt: " + totals.exactReceiptTotal.toFixed(2);
-            document.getElementById('liveCollectDisplay').innerText = "Collect: " + totals.collectTotal;
+            document.getElementById('liveReceiptDisplay').innerText = totals.exactReceiptTotal.toFixed(2);
+            document.getElementById('liveCollectDisplay').innerText = totals.collectTotal + " EGP";
         }
 
-        // --- RENDER LOGIC ---
-        function renderPlates(pIdx) {
-            const container = document.getElementById(`plates-container-${pIdx}`);
-            container.innerHTML = '';
-            peopleData[pIdx].plates.forEach((plate, plIdx) => {
-                const row = document.createElement('div');
-                row.className = 'plate-row';
-                row.innerHTML = `
-                    <input type="number" step="0.01" value="${plate.val || ''}" placeholder="Price" oninput="updatePlate(${pIdx}, ${plIdx}, 'val', this.value)" inputmode="decimal">
-                    <div class="stepper">
-                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, -1)">-</button>
-                        <span class="stepper-val">${plate.div}</span>
-                        <button class="stepper-btn" onclick="updateSplit(${pIdx}, ${plIdx}, 1)">+</button>
-                    </div>
-                    <button class="btn-remove" onclick="removePlate(${pIdx}, ${plIdx})">×</button>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        function renderCommon() {
-            const container = document.getElementById('commonContainer');
-            container.innerHTML = '';
-            commonItems.forEach((val, idx) => {
-                const row = document.createElement('div');
-                row.className = 'plate-row';
-                row.innerHTML = `
-                    <input type="number" step="0.01" value="${val || ''}" placeholder="EGP" oninput="updateCommon(${idx}, this.value)" inputmode="decimal">
-                    <button class="btn-remove" onclick="removeCommon(${idx})">×</button>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        // --- DATA OPS ---
-        function initApp() {
-            vibrate();
-            const count = document.getElementById('peopleCount').value;
-            if(!count || count < 1) return alert("Enter count");
-            generateInputs(count);
-            showPage(2);
-        }
-
-        function generateInputs(count) {
-            const container = document.getElementById('peopleInputsContainer');
-            container.innerHTML = '';
-            peopleData = [];
-            commonItems = [0];
-            for (let i = 0; i < count; i++) {
-                peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: "" });
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    <input type="text" value="Person ${i+1}" onchange="peopleData[${i}].name = this.value; saveState()" style="font-weight:700; border:none; font-size:1.1rem; background:transparent; width:100%;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span class="label">Dish Price</span><span class="label">Split</span></div>
-                    <div id="plates-container-${i}"></div>
-                    <button class="btn-small" onclick="vibrate(); addPlateInput(${i})">+ ADD PLATE</button>
-                `;
-                container.appendChild(div);
-                renderPlates(i);
-            }
-            renderCommon();
-            updateTotals();
-            saveState();
-        }
-
-        function addPlateInput(pIdx) {
-            peopleData[pIdx].plates.push({val: 0, div: 1});
-            renderPlates(pIdx);
-            saveState();
-        }
-
-        function removePlate(pIdx, plIdx) {
-            vibrate();
-            peopleData[pIdx].plates.splice(plIdx, 1);
-            renderPlates(pIdx);
-            updateTotals();
-            saveState();
-        }
-
-        function updatePlate(pIdx, plIdx, key, val) {
-            peopleData[pIdx].plates[plIdx][key] = parseFloat(val) || (key === 'div' ? 1 : 0);
-            updateTotals();
-            saveState();
-        }
-
-        function updateSplit(pIdx, plIdx, delta) {
-            vibrate();
-            let current = peopleData[pIdx].plates[plIdx].div;
-            let newVal = current + delta;
-            if (newVal < 1) newVal = 1;
-            peopleData[pIdx].plates[plIdx].div = newVal;
-            renderPlates(pIdx);
-            updateTotals();
-            saveState();
-        }
-
-        function addCommonItem() {
-            commonItems.push(0);
-            renderCommon();
-            saveState();
-        }
-
-        function removeCommon(idx) {
-            vibrate();
-            commonItems.splice(idx, 1);
-            renderCommon();
-            updateTotals();
-            saveState();
-        }
-
-        function updateCommon(idx, val) { 
-            commonItems[idx] = parseFloat(val) || 0; 
-            updateTotals();
-            saveState();
-        }
-
-        function updatePaidStatus(idx, paidValue) {
-            peopleData[idx].paid = paidValue;
-            
-            if (paidValue === "") {
-                document.getElementById(`status-${idx}`).innerHTML = "";
-                saveState();
-                return;
-            }
-
-            const paid = parseFloat(paidValue) || 0;
-            const diff = paid - peopleData[idx].roundedTotal;
-            const statusEl = document.getElementById(`status-${idx}`);
-            
-            if (diff < 0) statusEl.innerHTML = `<span class="payment-status owed">Still owes ${Math.abs(diff)} EGP</span>`;
-            else if (diff > 0) statusEl.innerHTML = `<span class="payment-status change">Change due: ${diff} EGP</span>`;
-            else statusEl.innerHTML = `<span class="payment-status change">✓ Fully Paid</span>`;
-            
-            saveState();
-        }
-
-        function payExact(idx) {
-            vibrate();
-            const exactAmount = peopleData[idx].roundedTotal;
-            // Update input and state
-            const inputEl = document.getElementById(`paidInput-${idx}`);
-            if(inputEl) inputEl.value = exactAmount;
-            
-            updatePaidStatus(idx, exactAmount.toString());
-        }
+        function addPlateInput(pIdx) { peopleData[pIdx].plates.push({val: 0, div: 1}); renderPlates(pIdx); saveState(); }
+        function removePlate(pIdx, plIdx) { vibrate(); peopleData[pIdx].plates.splice(plIdx, 1); renderPlates(pIdx); updateTotals(); saveState(); }
+        function updatePlate(pIdx, plIdx, key, val) { peopleData[pIdx].plates[plIdx][key] = parseFloat(val) || (key === 'div' ? 1 : 0); updateTotals(); saveState(); }
+        function updateSplit(pIdx, plIdx, delta) { vibrate(); let cur = peopleData[pIdx].plates[plIdx].div; let newVal = cur + delta; if(newVal < 1) newVal = 1; peopleData[pIdx].plates[plIdx].div = newVal; renderPlates(pIdx); updateTotals(); saveState(); }
+        
+        function addCommonItem() { commonItems.push(0); renderCommon(); saveState(); }
+        function removeCommon(idx) { vibrate(); commonItems.splice(idx, 1); renderCommon(); updateTotals(); saveState(); }
+        function updateCommon(idx, val) { commonItems[idx] = parseFloat(val) || 0; updateTotals(); saveState(); }
 
         function calculateAndShowResults() {
             const totals = getTotals();
@@ -515,52 +497,66 @@
                 const foodSubtotal = individualFood + sharePerPerson;
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
-                
                 const exactTotal = foodSubtotal + service + tax + tipPerPerson;
 
                 const row = document.createElement('div');
                 row.className = 'result-item';
                 row.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <strong>${person.name}: ${person.roundedTotal} EGP</strong>
-                            <div style="font-size:0.7rem; color:#888;">Exact: ${exactTotal.toFixed(2)}</div>
-                        </div>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <input type="number" id="paidInput-${i}" class="paid-input-mini" placeholder="Paid?" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
-                            <button class="btn-check" onclick="payExact(${i})">✓</button>
-                        </div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:1.1rem;">${person.name}</div>
+                        <div style="color:var(--md-sys-color-primary); font-weight:700; font-size:1.2rem;">${person.roundedTotal} <small style="font-size:0.8rem; color:#888;">EGP</small></div>
+                        <div id="status-${i}" style="font-size:0.8rem; margin-top:4px;"></div>
                     </div>
-                    <div id="status-${i}"></div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="number" id="paidInput-${i}" class="paid-input-mini" placeholder="0" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal" style="width:80px; height:44px; margin:0; border:none;">
+                        <button class="btn-check" onclick="payExact(${i})"><span class="btn-icon">check</span></button>
+                    </div>
                 `;
                 resultsList.appendChild(row);
-                
                 if(person.paid !== "") updatePaidStatus(i, person.paid);
             });
 
             document.getElementById('grandTotalDisplay').innerText = totals.collectTotal;
-            document.getElementById('receiptTotalDisplay').innerText = "Exact Receipt: " + totals.exactReceiptTotal.toFixed(2) + " EGP";
+            document.getElementById('receiptTotalDisplay').innerText = "Receipt: " + totals.exactReceiptTotal.toFixed(2);
             showPage(3);
+        }
+
+        function updatePaidStatus(idx, paidValue) {
+            peopleData[idx].paid = paidValue;
+            const statusEl = document.getElementById(`status-${idx}`);
+            if (paidValue === "") { statusEl.innerHTML = ""; saveState(); return; }
+
+            const paid = parseFloat(paidValue) || 0;
+            const diff = paid - peopleData[idx].roundedTotal;
+            
+            if (diff < 0) statusEl.innerHTML = `<span style="color:#B3261E; font-weight:bold;">Owes ${Math.abs(diff)}</span>`;
+            else if (diff > 0) statusEl.innerHTML = `<span style="color:#2E7D32; font-weight:bold;">Change ${diff}</span>`;
+            else statusEl.innerHTML = `<span style="color:#2E7D32; font-weight:bold;">Paid ✓</span>`;
+            saveState();
+        }
+
+        function payExact(idx) {
+            vibrate();
+            const val = peopleData[idx].roundedTotal;
+            document.getElementById(`paidInput-${idx}`).value = val;
+            updatePaidStatus(idx, val.toString());
         }
 
         function shareToWhatsApp() {
             const title = document.getElementById('billTitle').value;
-            const titleText = title ? ` (${title})` : "";
-            
-            let msg = `*Split Summary${titleText}* 🧾\n\n`;
-            peopleData.forEach((person, i) => {
+            let msg = `*${title || 'Bill Split'}* 🧾\n\n`;
+            peopleData.forEach((person) => {
                 const paidVal = parseFloat(person.paid) || 0;
                 const diff = paidVal - person.roundedTotal;
                 let status = "";
-                
                 if (person.paid !== "") {
-                    if (diff < 0) status = ` (Still owes ${Math.abs(diff)} EGP)`;
-                    else if (diff > 0) status = ` (Change due: ${diff} EGP)`;
-                    else status = ` (Fully Paid ✓)`;
+                    if (diff < 0) status = ` (Owes ${Math.abs(diff)})`;
+                    else if (diff > 0) status = ` (Change ${diff})`;
+                    else status = ` (Paid ✓)`;
                 }
-                msg += `• *${person.name}*: ${person.roundedTotal} EGP${status}\n`;
+                msg += `• *${person.name}*: ${person.roundedTotal}${status}\n`;
             });
-            msg += `\n*Collect Total: ${document.getElementById('grandTotalDisplay').innerText} EGP*`;
+            msg += `\n*Total: ${document.getElementById('grandTotalDisplay').innerText} EGP*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
