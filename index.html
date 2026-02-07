@@ -128,8 +128,23 @@
         .owed { color: var(--md-sys-color-error); background: #fce8e6; }
         .change { color: var(--md-sys-color-success); background: #e8f5e9; }
         .paid-input-mini { width: 90px !important; padding: 10px !important; margin: 0 !important; font-weight: bold; text-align: right; }
-        .grand-total { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; color: var(--md-sys-color-primary); letter-spacing: -1px; }
-        .receipt-total { font-size: 1rem; text-align: center; color: #666; margin-top: -10px; margin-bottom: 20px; font-weight: 500; }
+        
+        .grand-total { 
+            font-size: 3rem; font-weight: 700; text-align: center; 
+            margin: 0; color: var(--md-sys-color-primary); 
+            letter-spacing: -1px; line-height: 1.2;
+        }
+        .total-label {
+            text-align: center; font-size: 0.75rem; color: #888; 
+            font-weight: 700; margin-bottom: 20px; display: block;
+        }
+        .receipt-total { 
+            font-size: 0.95rem; text-align: center; color: #555; 
+            font-weight: 500; background: #e0e0e0; 
+            padding: 8px 16px; border-radius: 50px;
+            display: inline-block; margin: 0 auto;
+        }
+        .receipt-container { text-align: center; margin-bottom: 24px; }
     </style>
 </head>
 <body>
@@ -186,10 +201,16 @@
         <h2>Payment Summary</h2>
         <div class="card">
             <div id="resultsList"></div>
-            <div class="grand-total" id="grandTotalDisplay">0</div>
-            <div style="text-align: center; font-size: 0.8rem; color: #888; font-weight: 700; margin-top: -5px;">TOTAL TO COLLECT (ROUNDED)</div>
-            <div id="receiptTotalDisplay" class="receipt-total">Exact Receipt: 0.00 EGP</div>
             
+            <div style="margin-top: 30px; text-align: center;">
+                <div class="grand-total" id="grandTotalDisplay">0</div>
+                <span class="total-label">TOTAL TO COLLECT</span>
+                
+                <div class="receipt-container">
+                    <span id="receiptTotalDisplay" class="receipt-total">Exact Receipt: 0.00 EGP</span>
+                </div>
+            </div>
+
             <button onclick="vibrate(); resetAndGoBack()" style="background:none; border:none; color:var(--md-sys-color-error); font-weight:700; width:100%; margin-top:10px; padding:12px;">🗑 START NEW BILL</button>
         </div>
 
@@ -291,14 +312,11 @@
                 const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
                 const foodSubtotal = individualFood + sharePerPerson;
                 
-                // Standard Egyptian Calc: Service on Food, Tax on (Food+Service)
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 
-                // Receipt matches the restaurant bill (exact decimals, no tip)
                 exactReceiptTotal += (foodSubtotal + service + tax);
                 
-                // Collect matches what we ask from friends (rounded + tip)
                 person.roundedTotal = Math.round(foodSubtotal + service + tax + tipPerPerson);
                 collectTotal += person.roundedTotal;
             });
@@ -361,7 +379,8 @@
             peopleData = [];
             commonItems = [0];
             for (let i = 0; i < count; i++) {
-                peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: 0 });
+                // Initialize "paid" as empty string so 0 can be typed explicitly later
+                peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: "" });
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
@@ -430,25 +449,33 @@
         }
 
         function updatePaidStatus(idx, paidValue) {
+            // Store the raw string value (so we can distinguish "" from "0")
+            peopleData[idx].paid = paidValue;
+            
+            // If empty, clear the status text
+            if (paidValue === "") {
+                document.getElementById(`status-${idx}`).innerHTML = "";
+                saveState();
+                return;
+            }
+
+            // Otherwise, calculate status (even if 0)
             const paid = parseFloat(paidValue) || 0;
-            peopleData[idx].paid = paid; 
             const diff = paid - peopleData[idx].roundedTotal;
             const statusEl = document.getElementById(`status-${idx}`);
-            if (paid === 0) statusEl.innerHTML = "";
-            else if (diff < 0) statusEl.innerHTML = `<span class="payment-status owed">Still owes ${Math.abs(diff)} EGP</span>`;
+            
+            if (diff < 0) statusEl.innerHTML = `<span class="payment-status owed">Still owes ${Math.abs(diff)} EGP</span>`;
             else if (diff > 0) statusEl.innerHTML = `<span class="payment-status change">Change due: ${diff} EGP</span>`;
             else statusEl.innerHTML = `<span class="payment-status change">✓ Fully Paid</span>`;
+            
             saveState();
         }
 
         function calculateAndShowResults() {
             const totals = getTotals();
-            
-            // Render Results
             const resultsList = document.getElementById('resultsList');
             resultsList.innerHTML = '';
             
-            // Re-calc for breakdown display
             const numPeople = Math.max(1, peopleData.length);
             const useService = document.getElementById('serviceToggle').checked;
             const useTax = document.getElementById('taxToggle').checked;
@@ -463,7 +490,6 @@
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 
-                // person.roundedTotal is already set in getTotals(), but we recalculate for clarity of display vars
                 const exactTotal = foodSubtotal + service + tax + tipPerPerson;
 
                 const row = document.createElement('div');
@@ -474,12 +500,14 @@
                             <strong>${person.name}: ${person.roundedTotal} EGP</strong>
                             <div style="font-size:0.7rem; color:#888;">Exact: ${exactTotal.toFixed(2)}</div>
                         </div>
-                        <input type="number" class="paid-input-mini" placeholder="Paid?" value="${person.paid || ''}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
+                        <input type="number" class="paid-input-mini" placeholder="Paid?" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
                     </div>
                     <div id="status-${i}"></div>
                 `;
                 resultsList.appendChild(row);
-                if(person.paid > 0) updatePaidStatus(i, person.paid);
+                
+                // If the user has typed anything (including "0"), update the status immediately
+                if(person.paid !== "") updatePaidStatus(i, person.paid);
             });
 
             document.getElementById('grandTotalDisplay').innerText = totals.collectTotal;
@@ -490,10 +518,12 @@
         function shareToWhatsApp() {
             let msg = "*Split Summary (EGP)* 🧾\n\n";
             peopleData.forEach((person, i) => {
-                const paid = person.paid || 0;
-                const diff = paid - person.roundedTotal;
+                const paidVal = parseFloat(person.paid) || 0;
+                const diff = paidVal - person.roundedTotal;
                 let status = "";
-                if (paid > 0) {
+                
+                // Only add status details to WhatsApp if they have paid something or explicitly 0
+                if (person.paid !== "") {
                     if (diff < 0) status = ` (Still owes ${Math.abs(diff)} EGP)`;
                     else if (diff > 0) status = ` (Change due: ${diff} EGP)`;
                     else status = ` (Fully Paid ✓)`;
