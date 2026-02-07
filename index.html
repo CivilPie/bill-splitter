@@ -34,7 +34,7 @@
         .page { 
             display: none; width: 100%; min-height: 100vh;
             padding: 20px; box-sizing: border-box; 
-            padding-bottom: calc(120px + var(--safe-area-bottom)); /* More space for taller bottom bar */
+            padding-bottom: calc(130px + var(--safe-area-bottom));
             opacity: 0; transition: opacity 0.2s ease-in-out;
         }
         
@@ -107,9 +107,10 @@
         
         .live-total-row {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.9rem; color: #555; padding: 0 4px;
+            font-size: 0.85rem; color: #555; padding: 0 4px;
         }
-        .live-total-val { font-weight: 700; color: var(--md-sys-color-primary); font-size: 1.1rem; }
+        .live-receipt { color: #666; font-weight: 500; }
+        .live-collect { color: var(--md-sys-color-primary); font-weight: 700; font-size: 1.1rem; }
 
         .action-row { display: flex; gap: 12px; }
 
@@ -128,6 +129,7 @@
         .change { color: var(--md-sys-color-success); background: #e8f5e9; }
         .paid-input-mini { width: 90px !important; padding: 10px !important; margin: 0 !important; font-weight: bold; text-align: right; }
         .grand-total { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; color: var(--md-sys-color-primary); letter-spacing: -1px; }
+        .receipt-total { font-size: 1rem; text-align: center; color: #666; margin-top: -10px; margin-bottom: 20px; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -157,21 +159,21 @@
             <div class="switch-group">
                 <div class="switch-container">
                     <span style="font-weight: 500;">Service Charge (12%)</span>
-                    <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateLiveTotal(); saveState()"><span class="slider"></span></label>
+                    <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
                 </div>
                 <div class="switch-container">
                     <span style="font-weight: 500;">VAT Tax (14%)</span>
-                    <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateLiveTotal(); saveState()"><span class="slider"></span></label>
+                    <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
                 </div>
             </div>
             <span class="label">Total Table Tip</span>
-            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="updateLiveTotal(); saveState()">
+            <input type="number" id="totalTipValue" placeholder="EGP" inputmode="numeric" oninput="updateTotals(); saveState()">
         </div>
 
         <div class="bottom-bar">
             <div class="live-total-row">
-                <span>Bill Total:</span>
-                <span id="liveTotalDisplay" class="live-total-val">0 EGP</span>
+                <span id="liveReceiptDisplay" class="live-receipt">Receipt: 0.00</span>
+                <span id="liveCollectDisplay" class="live-collect">Collect: 0</span>
             </div>
             <div class="action-row">
                 <button class="btn-full btn-tonal" onclick="vibrate(); resetAndGoBack()">Back</button>
@@ -185,8 +187,10 @@
         <div class="card">
             <div id="resultsList"></div>
             <div class="grand-total" id="grandTotalDisplay">0</div>
-            <div style="text-align: center; font-size: 0.8rem; color: #888; font-weight: 700; margin-top: -5px;">TOTAL EGP</div>
-            <button onclick="vibrate(); resetAndGoBack()" style="background:none; border:none; color:var(--md-sys-color-error); font-weight:700; width:100%; margin-top:24px; padding:12px;">🗑 START NEW BILL</button>
+            <div style="text-align: center; font-size: 0.8rem; color: #888; font-weight: 700; margin-top: -5px;">TOTAL TO COLLECT (ROUNDED)</div>
+            <div id="receiptTotalDisplay" class="receipt-total">Exact Receipt: 0.00 EGP</div>
+            
+            <button onclick="vibrate(); resetAndGoBack()" style="background:none; border:none; color:var(--md-sys-color-error); font-weight:700; width:100%; margin-top:10px; padding:12px;">🗑 START NEW BILL</button>
         </div>
 
         <div class="bottom-bar">
@@ -252,7 +256,7 @@
             document.getElementById('taxToggle').checked = data.tax;
             document.getElementById('totalTipValue').value = data.tip;
 
-            updateLiveTotal();
+            updateTotals();
             showPage(data.currentPage);
             if(data.currentPage === 3) calculateAndShowResults();
         }
@@ -269,27 +273,43 @@
             saveState(num);
         }
 
-        // --- LIVE TOTAL LOGIC ---
-        function updateLiveTotal() {
+        // --- MATH & TOTALS LOGIC ---
+        function getTotals() {
             const numPeople = Math.max(1, peopleData.length);
             const useService = document.getElementById('serviceToggle').checked;
             const useTax = document.getElementById('taxToggle').checked;
             const tipTotal = parseFloat(document.getElementById('totalTipValue').value) || 0;
             const commonTotal = commonItems.reduce((a, b) => a + b, 0);
 
-            let grandTotal = 0;
             const sharePerPerson = commonTotal / numPeople;
             const tipPerPerson = tipTotal / numPeople;
+
+            let exactReceiptTotal = 0;
+            let collectTotal = 0;
 
             peopleData.forEach(person => {
                 const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
                 const foodSubtotal = individualFood + sharePerPerson;
+                
+                // Standard Egyptian Calc: Service on Food, Tax on (Food+Service)
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
-                grandTotal += Math.round(foodSubtotal + service + tax + tipPerPerson);
+                
+                // Receipt matches the restaurant bill (exact decimals, no tip)
+                exactReceiptTotal += (foodSubtotal + service + tax);
+                
+                // Collect matches what we ask from friends (rounded + tip)
+                person.roundedTotal = Math.round(foodSubtotal + service + tax + tipPerPerson);
+                collectTotal += person.roundedTotal;
             });
 
-            document.getElementById('liveTotalDisplay').innerText = grandTotal + " EGP";
+            return { exactReceiptTotal, collectTotal };
+        }
+
+        function updateTotals() {
+            const totals = getTotals();
+            document.getElementById('liveReceiptDisplay').innerText = "Receipt: " + totals.exactReceiptTotal.toFixed(2);
+            document.getElementById('liveCollectDisplay').innerText = "Collect: " + totals.collectTotal;
         }
 
         // --- RENDER LOGIC ---
@@ -326,7 +346,7 @@
             });
         }
 
-        // --- DATA MANIPULATION ---
+        // --- DATA OPS ---
         function initApp() {
             vibrate();
             const count = document.getElementById('peopleCount').value;
@@ -354,7 +374,7 @@
                 renderPlates(i);
             }
             renderCommon();
-            updateLiveTotal();
+            updateTotals();
             saveState();
         }
 
@@ -368,13 +388,13 @@
             vibrate();
             peopleData[pIdx].plates.splice(plIdx, 1);
             renderPlates(pIdx);
-            updateLiveTotal();
+            updateTotals();
             saveState();
         }
 
         function updatePlate(pIdx, plIdx, key, val) {
             peopleData[pIdx].plates[plIdx][key] = parseFloat(val) || (key === 'div' ? 1 : 0);
-            updateLiveTotal();
+            updateTotals();
             saveState();
         }
 
@@ -384,8 +404,8 @@
             let newVal = current + delta;
             if (newVal < 1) newVal = 1;
             peopleData[pIdx].plates[plIdx].div = newVal;
-            renderPlates(pIdx); // Re-render to show new number
-            updateLiveTotal();
+            renderPlates(pIdx);
+            updateTotals();
             saveState();
         }
 
@@ -399,13 +419,13 @@
             vibrate();
             commonItems.splice(idx, 1);
             renderCommon();
-            updateLiveTotal();
+            updateTotals();
             saveState();
         }
 
         function updateCommon(idx, val) { 
             commonItems[idx] = parseFloat(val) || 0; 
-            updateLiveTotal();
+            updateTotals();
             saveState();
         }
 
@@ -422,12 +442,13 @@
         }
 
         function calculateAndShowResults() {
-            // Live total function already calculates the logic, we just render page 3
-            updateLiveTotal();
+            const totals = getTotals();
+            
+            // Render Results
             const resultsList = document.getElementById('resultsList');
             resultsList.innerHTML = '';
             
-            // Re-run logic for detailed list
+            // Re-calc for breakdown display
             const numPeople = Math.max(1, peopleData.length);
             const useService = document.getElementById('serviceToggle').checked;
             const useTax = document.getElementById('taxToggle').checked;
@@ -435,8 +456,6 @@
             const commonTotal = commonItems.reduce((a, b) => a + b, 0);
             const sharePerPerson = commonTotal / numPeople;
             const tipPerPerson = tipTotal / numPeople;
-            
-            let totalRoundedSum = 0;
 
             peopleData.forEach((person, i) => {
                 const individualFood = person.plates.reduce((sum, p) => sum + (p.val / p.div), 0);
@@ -444,8 +463,8 @@
                 const service = useService ? (foodSubtotal * 0.12) : 0;
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 
-                person.roundedTotal = Math.round(foodSubtotal + service + tax + tipPerPerson);
-                totalRoundedSum += person.roundedTotal;
+                // person.roundedTotal is already set in getTotals(), but we recalculate for clarity of display vars
+                const exactTotal = foodSubtotal + service + tax + tipPerPerson;
 
                 const row = document.createElement('div');
                 row.className = 'result-item';
@@ -453,18 +472,18 @@
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <strong>${person.name}: ${person.roundedTotal} EGP</strong>
-                            <div style="font-size:0.7rem; color:#888;">Exact: ${(foodSubtotal + service + tax + tipPerPerson).toFixed(2)}</div>
+                            <div style="font-size:0.7rem; color:#888;">Exact: ${exactTotal.toFixed(2)}</div>
                         </div>
                         <input type="number" class="paid-input-mini" placeholder="Paid?" value="${person.paid || ''}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
                     </div>
                     <div id="status-${i}"></div>
                 `;
                 resultsList.appendChild(row);
-                
                 if(person.paid > 0) updatePaidStatus(i, person.paid);
             });
 
-            document.getElementById('grandTotalDisplay').innerText = totalRoundedSum;
+            document.getElementById('grandTotalDisplay').innerText = totals.collectTotal;
+            document.getElementById('receiptTotalDisplay').innerText = "Exact Receipt: " + totals.exactReceiptTotal.toFixed(2) + " EGP";
             showPage(3);
         }
 
@@ -481,7 +500,7 @@
                 }
                 msg += `• *${person.name}*: ${person.roundedTotal} EGP${status}\n`;
             });
-            msg += `\n*Grand Total: ${document.getElementById('grandTotalDisplay').innerText} EGP*`;
+            msg += `\n*Collect Total: ${document.getElementById('grandTotalDisplay').innerText} EGP*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
