@@ -6,9 +6,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#FFFBFE">
-    <title>Split EGP M3</title>
+    <title>Split EGP Pro</title>
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
     
     <style>
@@ -21,27 +22,18 @@
             --md-sys-color-secondary: #625B71;
             --md-sys-color-secondary-container: #E8DEF8;
             --md-sys-color-on-secondary-container: #1D192B;
-            
-            --md-sys-color-error: #B3261E;
-            --md-sys-color-error-container: #F9DEDC;
-            
-            --md-sys-color-background: #FFFBFE;
+
             --md-sys-color-surface: #FFFBFE;
-            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-surface-container: #F3EDF7;
             --md-sys-color-on-surface: #1C1B1F;
-            --md-sys-color-on-surface-variant: #49454F;
             
             --md-sys-color-outline: #79747E;
-
             --safe-area-bottom: env(safe-area-inset-bottom, 20px);
-            --radius-l: 28px;
-            --radius-m: 16px;
-            --radius-s: 12px;
         }
 
         body { 
-            font-family: 'Roboto', sans-serif; 
-            background-color: var(--md-sys-color-background);
+            font-family: 'Roboto', sans-serif; /* Classic Bold Font */
+            background-color: var(--md-sys-color-surface);
             color: var(--md-sys-color-on-surface);
             margin: 0; padding: 0;
             overflow-x: hidden;
@@ -58,7 +50,7 @@
         
         .active { 
             display: block; opacity: 1;
-            animation: slideUp 0.4s cubic-bezier(0.05, 0.7, 0.1, 1); 
+            animation: slideUp 0.4s cubic-bezier(0.05, 0.7, 0.1, 1);
         }
 
         @keyframes slideUp { 
@@ -66,134 +58,137 @@
             to { transform: translateY(0); opacity: 1; } 
         }
 
+        /* TYPOGRAPHY - BOLDER */
         h2 { 
-            font-size: 32px; font-weight: 400; line-height: 40px; 
+            font-size: 34px; font-weight: 700; /* Bold */
             color: var(--md-sys-color-on-surface); 
-            margin: 40px 0 24px 0;
-            text-align: left;
+            margin: 40px 0 24px 0; letter-spacing: -0.5px;
         }
         
         .label { 
-            font-size: 12px; font-weight: 500; letter-spacing: 0.5px; 
-            color: var(--md-sys-color-on-surface-variant); 
-            text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 12px;
+            font-size: 13px; font-weight: 700; letter-spacing: 0.5px; 
+            color: var(--md-sys-color-primary); 
+            text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 16px;
         }
 
+        /* CARDS */
         .card { 
-            background: var(--md-sys-color-surface); 
+            background: #FDF8FD; 
             border: 1px solid #E7E0EC;
-            padding: 16px; border-radius: var(--radius-l); margin-bottom: 12px; 
-            background-color: #FDF8FD;
+            padding: 20px; border-radius: 20px; margin-bottom: 12px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03); /* Slight shadow for depth */
         }
         .card-filled {
             background-color: var(--md-sys-color-secondary-container);
-            border: none;
-            color: var(--md-sys-color-on-secondary-container);
+            border: none; color: var(--md-sys-color-on-secondary-container);
         }
 
+        /* INPUTS */
+        .input-group { 
+            background: #F3EDF7; border-radius: 12px; 
+            overflow: hidden; margin-bottom: 8px; border-bottom: 1px solid #79747E;
+        }
         input { 
-            background: var(--md-sys-color-surface-variant); 
-            border: none; border-bottom: 2px solid transparent;
-            border-radius: 4px 4px 0 0;
-            padding: 16px; margin: 0; width: 100%; box-sizing: border-box; 
-            font-size: 16px; color: var(--md-sys-color-on-surface);
-            transition: all 0.2s;
+            background: transparent; border: none;
+            padding: 16px; width: 100%; box-sizing: border-box; 
+            font-size: 17px; font-weight: 500; /* Medium Weight */
+            color: var(--md-sys-color-on-surface);
+            outline: none; font-family: 'Roboto', sans-serif;
         }
-        input:focus { 
-            border-bottom-color: var(--md-sys-color-primary); 
-            background: #D0BCFF; outline: none; 
-        }
-        .input-group { border-radius: var(--radius-s); overflow: hidden; margin-bottom: 8px; }
 
+        /* BUTTONS */
         .btn-tonal {
             background: var(--md-sys-color-secondary-container);
             color: var(--md-sys-color-on-secondary-container);
             border-radius: 100px; padding: 12px 24px; border: none;
-            font-weight: 500; font-size: 14px; cursor: pointer;
+            font-weight: 700; font-size: 14px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.2s;
         }
-        .btn-tonal:active { transform: scale(0.98); }
-
         .btn-fab {
             background: var(--md-sys-color-primary);
             color: var(--md-sys-color-on-primary);
-            border-radius: 16px;
-            padding: 16px 24px; border: none;
-            font-size: 16px; font-weight: 500;
+            border-radius: 18px;
+            padding: 18px 24px; border: none;
+            font-size: 16px; font-weight: 700; /* Bold Button Text */
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            flex: 1;
+            box-shadow: 0 4px 12px rgba(103, 80, 164, 0.4);
+            flex: 1; transition: transform 0.1s;
         }
-        
-        .btn-icon { font-family: 'Material Symbols Rounded'; font-size: 20px; }
+        .btn-fab:active { transform: scale(0.97); }
+        .btn-icon { font-family: 'Material Symbols Rounded'; font-size: 22px; font-weight: bold; }
 
-        .plate-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-        
-        .stepper {
-            display: flex; align-items: center; background: var(--md-sys-color-surface-variant);
-            border-radius: var(--radius-m); height: 56px; width: 100px;
-        }
-        .stepper-btn {
-            background: none; border: none; color: var(--md-sys-color-on-surface);
-            width: 35px; height: 100%; font-size: 1.2rem; cursor: pointer;
-        }
-        .stepper-val { flex: 1; text-align: center; font-weight: 700; }
-
-        .btn-remove {
-            background: var(--md-sys-color-error-container); color: var(--md-sys-color-error);
-            border: none; border-radius: var(--radius-m);
-            width: 48px; height: 56px; cursor: pointer;
+        /* AVATAR */
+        .person-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
             display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 18px; /* Extra Bold Letter */
+            flex-shrink: 0;
         }
 
-        .switch-container { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-        .switch { position: relative; display: inline-block; width: 52px; height: 32px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-outline); transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--md-sys-color-primary); }
-        input:checked + .slider:before { transform: translateX(20px); background-color: var(--md-sys-color-on-primary); }
-
+        /* BOTTOM BAR */
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: #F3EDF7;
-            padding: 12px 16px; padding-bottom: max(16px, var(--safe-area-bottom));
-            border-radius: 24px 24px 0 0;
-            display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100;
+            padding: 16px 20px; padding-bottom: max(16px, var(--safe-area-bottom));
+            border-radius: 28px 28px 0 0;
+            display: flex; flex-direction: column; gap: 16px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.08); z-index: 100;
         }
+
+        /* ROW STYLES */
+        .plate-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .stepper {
+            display: flex; align-items: center; background: #E7E0EC;
+            border-radius: 12px; height: 54px; width: 110px;
+        }
+        .stepper-btn {
+            background: none; border: none; color: var(--md-sys-color-on-surface);
+            width: 35px; height: 100%; font-size: 1.5rem; font-weight: 700; cursor: pointer;
+        }
+        .stepper-val { flex: 1; text-align: center; font-weight: 900; font-size: 1.1rem; }
         
-        .result-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--md-sys-color-surface); 
-            padding: 16px; border-radius: 16px; margin-bottom: 8px;
-            border: 1px solid #E7E0EC;
+        .btn-remove {
+            background: #FFDAD6; color: #BA1A1A;
+            border: none; border-radius: 12px;
+            width: 48px; height: 54px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
+
+        /* SUMMARY PAGE */
         .grand-total-card {
             background: var(--md-sys-color-primary); color: white;
-            padding: 32px; border-radius: 32px; text-align: center;
-            margin-bottom: 24px;
+            padding: 40px 20px; border-radius: 28px; text-align: center;
+            margin-bottom: 24px; box-shadow: 0 8px 24px rgba(103, 80, 164, 0.25);
+        }
+        .result-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            background: #FDF8FD; border: 1px solid #E7E0EC;
+            padding: 16px; border-radius: 16px; margin-bottom: 8px;
+        }
+        .paid-input-mini { 
+            background: #E7E0EC; border-radius: 8px; text-align: center; font-weight: 700;
+            color: var(--md-sys-color-on-surface); font-size: 1.1rem;
         }
         .btn-check {
-            background: var(--md-sys-color-primary-container); 
-            color: var(--md-sys-color-on-primary-container);
+            background: #C4EED0; color: #006C2E;
             border: none; border-radius: 12px; width: 44px; height: 44px;
             display: flex; align-items: center; justify-content: center;
         }
-        .paid-input-mini { 
-            background: #F5F5F5; border-radius: 8px; text-align: center; font-weight: bold;
-        }
-        
-        /* Stats row for bottom bar */
-        .stats-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 8px; font-size: 0.9rem;
-        }
-        .stat-label { color: var(--md-sys-color-secondary); }
-        .stat-val { font-weight: 700; color: var(--md-sys-color-on-surface); }
-        .stat-val-highlight { font-weight: 700; color: var(--md-sys-color-primary); font-size: 1.1rem; }
 
+        /* SWITCH & SLIDER */
+        .switch-container { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+        .switch { position: relative; display: inline-block; width: 52px; height: 32px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #79747E; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 6px; bottom: 6px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--md-sys-color-primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .stats-row { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; }
+        .stat-val-highlight { font-weight: 900; color: var(--md-sys-color-primary); font-size: 1.3rem; }
     </style>
 </head>
 <body>
@@ -203,17 +198,17 @@
         <div class="card">
             <span class="label">Bill Context</span>
             <div class="input-group">
-                <input type="text" id="billTitle" placeholder="Location name (e.g. Spectra)" oninput="saveState()">
+                <input type="text" id="billTitle" placeholder="Location name (e.g. Spectra)" oninput="saveState()" style="font-weight: 700;">
             </div>
             
             <span class="label">Party Size</span>
             <div class="input-group">
-                <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="Number of people">
+                <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="Number of people" style="font-weight: 700;">
             </div>
         </div>
         
-        <div style="position:fixed; bottom:40px; right:20px;">
-            <button class="btn-fab" onclick="initApp()" style="border-radius: 24px; padding: 20px 30px;">
+        <div style="position:fixed; bottom:32px; right:20px;">
+            <button class="btn-fab" onclick="initApp()" style="padding: 20px 28px; border-radius: 24px;">
                 <span class="btn-icon">arrow_forward</span> Start
             </button>
         </div>
@@ -222,16 +217,16 @@
     <div id="page2" class="page">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2>Details</h2>
-            <button class="btn-tonal" onclick="resetAndGoBack()" style="height:40px;"><span class="btn-icon">restart_alt</span> Reset</button>
+            <button class="btn-tonal" onclick="resetAndGoBack()"><span class="btn-icon">restart_alt</span> Reset</button>
         </div>
 
         <div id="peopleInputsContainer"></div>
         
         <div class="card card-filled">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:bold; font-size:1.1rem;">Shared Items</span>
-                <button class="btn-tonal" onclick="vibrate(); addCommonItem()" style="background:white; padding:8px 16px;">
-                    <span class="btn-icon">add</span> Add
+                <span style="font-weight:700; font-size:1.1rem;">Shared Items</span>
+                <button class="btn-tonal" onclick="vibrate(); addCommonItem()" style="background:white; height:36px; padding:0 16px;">
+                    <span class="btn-icon" style="font-size:20px;">add</span> Add
                 </button>
             </div>
             <div id="commonContainer" style="margin-top:16px;"></div>
@@ -239,27 +234,27 @@
 
         <div class="card">
             <div class="switch-container">
-                <span style="font-weight: 500;">Service (12%)</span>
+                <span style="font-weight: 700; font-size:1.1rem;">Service (12%)</span>
                 <label class="switch"><input type="checkbox" id="serviceToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
             </div>
             <div class="switch-container">
-                <span style="font-weight: 500;">VAT (14%)</span>
+                <span style="font-weight: 700; font-size:1.1rem;">VAT (14%)</span>
                 <label class="switch"><input type="checkbox" id="taxToggle" checked onchange="vibrate(); updateTotals(); saveState()"><span class="slider"></span></label>
             </div>
             <span class="label">Extra Tip (EGP)</span>
             <div class="input-group">
-                <input type="number" id="totalTipValue" placeholder="0.00" inputmode="numeric" oninput="updateTotals(); saveState()">
+                <input type="number" id="totalTipValue" placeholder="0.00" inputmode="numeric" oninput="updateTotals(); saveState()" style="font-weight: 700;">
             </div>
         </div>
 
         <div class="bottom-bar">
             <div class="stats-row">
-                <span class="stat-label">Receipt</span>
-                <span id="liveReceiptDisplay" class="stat-val">0.00</span>
+                <span style="color:#625B71; font-weight:700;">Receipt</span>
+                <span id="liveReceiptDisplay" style="font-weight:700;">0.00</span>
             </div>
             <div class="stats-row">
-                <span class="stat-label">Collect</span>
-                <span id="liveCollectDisplay" class="stat-val-highlight">0</span>
+                <span style="color:#625B71; font-weight:700;">Collect</span>
+                <span id="liveCollectDisplay" class="stat-val-highlight">0 EGP</span>
             </div>
             <button class="btn-fab" onclick="vibrate(); calculateAndShowResults()">
                 <span class="btn-icon">payments</span> Calculate
@@ -273,14 +268,14 @@
         </button>
 
         <div class="grand-total-card">
-            <div style="opacity:0.8; font-size:0.9rem;">TOTAL TO COLLECT</div>
-            <div id="grandTotalDisplay" style="font-size:3.5rem; font-weight:700; line-height:1.1;">0</div>
-            <div id="receiptTotalDisplay" style="background:rgba(255,255,255,0.2); display:inline-block; padding:4px 12px; border-radius:20px; margin-top:12px; font-size:0.9rem;">Receipt: 0.00</div>
+            <div style="opacity:0.9; font-size:0.9rem; letter-spacing:1px; font-weight:700;">TOTAL TO COLLECT</div>
+            <div id="grandTotalDisplay" style="font-size:4rem; font-weight:900; line-height:1.1; margin: 8px 0;">0</div>
+            <div id="receiptTotalDisplay" style="background:rgba(255,255,255,0.25); display:inline-block; padding:6px 16px; border-radius:20px; font-size:0.95rem; font-weight:700;">Receipt: 0.00</div>
         </div>
 
         <div id="resultsList"></div>
         
-        <button class="btn-tonal" onclick="vibrate(); resetAndGoBack()" style="width:100%; margin-top:24px; background:var(--md-sys-color-error-container); color:var(--md-sys-color-error);">
+        <button class="btn-tonal" onclick="vibrate(); resetAndGoBack()" style="width:100%; margin-top:32px; background:#FFDAD6; color:#BA1A1A;">
             <span class="btn-icon">delete</span> Start New Bill
         </button>
 
@@ -387,9 +382,16 @@
             const container = document.getElementById('peopleInputsContainer');
             const div = document.createElement('div');
             div.className = 'card';
+            
+            const colors = ['#6750A4', '#B58392', '#7D5260', '#825500', '#006D44', '#006782'];
+            const avatarColor = colors[idx % colors.length];
+
             div.innerHTML = `
-                <div class="input-group" style="margin-bottom:12px;">
-                    <input type="text" value="${name}" onchange="peopleData[${idx}].name = this.value; saveState()" style="font-weight:700; font-size:1.2rem; background:transparent; padding-left:0;">
+                <div class="person-header">
+                    <div class="avatar" style="background:${avatarColor}; color:white;">${name.charAt(0)}</div>
+                    <div class="input-group" style="flex:1; margin-bottom:0; border:none; background:transparent;">
+                        <input type="text" value="${name}" onchange="peopleData[${idx}].name = this.value; this.parentElement.previousElementSibling.innerText = this.value.charAt(0); saveState()" style="font-weight:900; font-size:1.3rem; padding:0;">
+                    </div>
                 </div>
                 <div id="plates-container-${idx}"></div>
                 <button class="btn-tonal" onclick="vibrate(); addPlateInput(${idx})" style="width:100%; margin-top:12px;">
@@ -436,7 +438,6 @@
             });
         }
 
-        // --- MATH & UPDATES ---
         function getTotals() {
             const numPeople = Math.max(1, peopleData.length);
             const useService = document.getElementById('serviceToggle').checked;
@@ -499,16 +500,22 @@
                 const tax = useTax ? ((foodSubtotal + service) * 0.14) : 0;
                 const exactTotal = foodSubtotal + service + tax + tipPerPerson;
 
+                const colors = ['#6750A4', '#B58392', '#7D5260', '#825500', '#006D44', '#006782'];
+                const avatarColor = colors[i % colors.length];
+
                 const row = document.createElement('div');
                 row.className = 'result-item';
                 row.innerHTML = `
+                    <div style="margin-right:12px;">
+                        <div class="avatar" style="background:${avatarColor}; color:white;">${person.name.charAt(0)}</div>
+                    </div>
                     <div style="flex:1;">
                         <div style="font-weight:700; font-size:1.1rem;">${person.name}</div>
-                        <div style="color:var(--md-sys-color-primary); font-weight:700; font-size:1.2rem;">${person.roundedTotal} <small style="font-size:0.8rem; color:#888;">EGP</small></div>
+                        <div style="color:var(--md-sys-color-primary); font-weight:800; font-size:1.3rem;">${person.roundedTotal} <small style="font-size:0.8rem; color:#888;">EGP</small></div>
                         <div id="status-${i}" style="font-size:0.8rem; margin-top:4px;"></div>
                     </div>
                     <div style="display:flex; gap:8px; align-items:center;">
-                        <input type="number" id="paidInput-${i}" class="paid-input-mini" placeholder="0" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal" style="width:80px; height:44px; margin:0; border:none;">
+                        <input type="number" id="paidInput-${i}" class="paid-input-mini" placeholder="0" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal" style="width:70px; height:44px; margin:0; border:none;">
                         <button class="btn-check" onclick="payExact(${i})"><span class="btn-icon">check</span></button>
                     </div>
                 `;
