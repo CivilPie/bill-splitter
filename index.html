@@ -127,7 +127,21 @@
         .payment-status { font-weight: 700; font-size: 0.85rem; margin-top: 6px; display: inline-block; padding: 4px 8px; border-radius: 6px; }
         .owed { color: var(--md-sys-color-error); background: #fce8e6; }
         .change { color: var(--md-sys-color-success); background: #e8f5e9; }
-        .paid-input-mini { width: 90px !important; padding: 10px !important; margin: 0 !important; font-weight: bold; text-align: right; }
+        
+        .paid-input-mini { 
+            width: 80px !important; padding: 10px !important; margin: 0 !important; 
+            font-weight: bold; text-align: center;
+        }
+
+        /* The Quick Pay Checkmark Button */
+        .btn-check {
+            background: var(--md-sys-color-success); color: white;
+            border: none; border-radius: 12px;
+            width: 42px; height: 42px; 
+            font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
         
         .grand-total { 
             font-size: 3rem; font-weight: 700; text-align: center; 
@@ -152,8 +166,12 @@
     <div id="page1" class="page active">
         <h2 style="margin-top: 60px;">Split Bill</h2>
         <div class="card">
-            <span class="label">Number of People</span>
+            <span class="label">Bill Name (Optional)</span>
+            <input type="text" id="billTitle" placeholder="Restaurant Name (e.g. Spectra)" oninput="saveState()">
+            
+            <span class="label" style="margin-top: 20px;">Number of People</span>
             <input type="number" id="peopleCount" min="1" inputmode="numeric" placeholder="How many people?">
+            
             <div class="bottom-bar" style="position:static; background:transparent; box-shadow:none; padding:0; margin-top:20px;">
                 <button class="btn-full btn-primary" onclick="initApp()">Get Started</button>
             </div>
@@ -204,7 +222,7 @@
             
             <div style="margin-top: 30px; text-align: center;">
                 <div class="grand-total" id="grandTotalDisplay">0</div>
-                <span class="total-label">TOTAL TO COLLECT</span>
+                <span class="total-label">TOTAL TO COLLECT (ROUNDED)</span>
                 
                 <div class="receipt-container">
                     <span id="receiptTotalDisplay" class="receipt-total">Exact Receipt: 0.00 EGP</span>
@@ -243,6 +261,7 @@
                 else pageNum = 1;
             }
             const state = {
+                billTitle: document.getElementById('billTitle').value,
                 peopleData: peopleData,
                 commonItems: commonItems,
                 service: document.getElementById('serviceToggle').checked,
@@ -254,6 +273,7 @@
         }
 
         function restoreState(data) {
+            document.getElementById('billTitle').value = data.billTitle || "";
             peopleData = data.peopleData;
             commonItems = data.commonItems;
             
@@ -379,7 +399,6 @@
             peopleData = [];
             commonItems = [0];
             for (let i = 0; i < count; i++) {
-                // Initialize "paid" as empty string so 0 can be typed explicitly later
                 peopleData.push({ name: `Person ${i+1}`, plates: [{val: 0, div: 1}], roundedTotal: 0, paid: "" });
                 const div = document.createElement('div');
                 div.className = 'card';
@@ -449,17 +468,14 @@
         }
 
         function updatePaidStatus(idx, paidValue) {
-            // Store the raw string value (so we can distinguish "" from "0")
             peopleData[idx].paid = paidValue;
             
-            // If empty, clear the status text
             if (paidValue === "") {
                 document.getElementById(`status-${idx}`).innerHTML = "";
                 saveState();
                 return;
             }
 
-            // Otherwise, calculate status (even if 0)
             const paid = parseFloat(paidValue) || 0;
             const diff = paid - peopleData[idx].roundedTotal;
             const statusEl = document.getElementById(`status-${idx}`);
@@ -469,6 +485,16 @@
             else statusEl.innerHTML = `<span class="payment-status change">✓ Fully Paid</span>`;
             
             saveState();
+        }
+
+        function payExact(idx) {
+            vibrate();
+            const exactAmount = peopleData[idx].roundedTotal;
+            // Update input and state
+            const inputEl = document.getElementById(`paidInput-${idx}`);
+            if(inputEl) inputEl.value = exactAmount;
+            
+            updatePaidStatus(idx, exactAmount.toString());
         }
 
         function calculateAndShowResults() {
@@ -500,13 +526,15 @@
                             <strong>${person.name}: ${person.roundedTotal} EGP</strong>
                             <div style="font-size:0.7rem; color:#888;">Exact: ${exactTotal.toFixed(2)}</div>
                         </div>
-                        <input type="number" class="paid-input-mini" placeholder="Paid?" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="number" id="paidInput-${i}" class="paid-input-mini" placeholder="Paid?" value="${person.paid}" oninput="updatePaidStatus(${i}, this.value)" inputmode="decimal">
+                            <button class="btn-check" onclick="payExact(${i})">✓</button>
+                        </div>
                     </div>
                     <div id="status-${i}"></div>
                 `;
                 resultsList.appendChild(row);
                 
-                // If the user has typed anything (including "0"), update the status immediately
                 if(person.paid !== "") updatePaidStatus(i, person.paid);
             });
 
@@ -516,13 +544,15 @@
         }
 
         function shareToWhatsApp() {
-            let msg = "*Split Summary (EGP)* 🧾\n\n";
+            const title = document.getElementById('billTitle').value;
+            const titleText = title ? ` (${title})` : "";
+            
+            let msg = `*Split Summary${titleText}* 🧾\n\n`;
             peopleData.forEach((person, i) => {
                 const paidVal = parseFloat(person.paid) || 0;
                 const diff = paidVal - person.roundedTotal;
                 let status = "";
                 
-                // Only add status details to WhatsApp if they have paid something or explicitly 0
                 if (person.paid !== "") {
                     if (diff < 0) status = ` (Still owes ${Math.abs(diff)} EGP)`;
                     else if (diff > 0) status = ` (Change due: ${diff} EGP)`;
